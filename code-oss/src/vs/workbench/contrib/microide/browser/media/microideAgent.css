@@ -1959,6 +1959,50 @@ body.microide-workbuddy-workbench .microide-agent-root.microide-collection-surfa
 	padding-bottom: 0;
 }
 
+body.microide-workbuddy-workbench .microide-workbuddy-automation-sections {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 22px;
+	width: min(1040px, 100%);
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.microide-workbuddy-automation-section {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.microide-workbuddy-automation-section-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 14px;
+	padding: 0 2px;
+}
+
+.microide-workbuddy-automation-section-title {
+	color: var(--vscode-foreground);
+	font-size: 16px;
+	font-weight: 740;
+}
+
+.microide-workbuddy-automation-section-description {
+	max-width: 520px;
+	color: var(--vscode-descriptionForeground);
+	font-size: 12px;
+	line-height: 1.4;
+	text-align: right;
+}
+
+.microide-workbuddy-automation-section .microide-workbuddy-card-grid {
+	width: 100%;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	margin: 0;
+}
+
 .microide-workbuddy-launcher,
 .microide-workbuddy-collection-header,
 .microide-workbuddy-progress-strip {
@@ -2164,6 +2208,51 @@ body.microide-workbuddy-workbench .microide-workbuddy-launcher-subtitle {
 	text-align: center;
 }
 
+.microide-workbuddy-studio-workspace-anchor {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	width: min(780px, 100%);
+	margin-bottom: 4px;
+}
+
+.microide-workbuddy-studio-workspace-button {
+	box-sizing: border-box;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	max-width: min(360px, 100%);
+	min-height: 30px;
+	padding: 4px 11px;
+	border: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 80%, transparent);
+	border-radius: 999px;
+	color: var(--vscode-foreground);
+	background: color-mix(in srgb, var(--vscode-input-background) 94%, transparent);
+	cursor: pointer;
+	box-shadow: 0 8px 22px color-mix(in srgb, var(--vscode-widget-shadow, #000) 8%, transparent);
+}
+
+.microide-workbuddy-studio-workspace-button span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.microide-workbuddy-studio-workspace-button:hover,
+.microide-workbuddy-studio-workspace-button:focus-visible {
+	outline: none;
+	border-color: color-mix(in srgb, var(--vscode-focusBorder) 58%, var(--vscode-sideBarSectionHeader-border));
+	background: var(--vscode-list-hoverBackground);
+}
+
+.microide-workbuddy-studio-workspace-anchor .microide-workbuddy-popover.workspace {
+	top: calc(100% + 8px);
+	left: 50%;
+	right: auto;
+	width: min(360px, calc(100vw - 40px));
+	transform: translateX(-50%);
+}
+
 .microide-workbuddy-mode-row.studio-modes,
 .microide-workbuddy-category-row {
 	justify-content: center;
@@ -2306,6 +2395,36 @@ body.microide-workbuddy-workbench .microide-workbuddy-launcher-subtitle {
 .microide-workbuddy-studio .microide-workbuddy-card-grid.starters .microide-workbuddy-card {
 	min-height: 48px;
 	padding: 11px 16px;
+}
+
+.microide-workbuddy-studio-suggestions {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 8px;
+	width: min(780px, 100%);
+	margin-top: 4px;
+}
+
+.microide-workbuddy-studio-suggestion {
+	box-sizing: border-box;
+	min-height: 36px;
+	padding: 8px 16px;
+	border: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 62%, transparent);
+	border-radius: 8px;
+	color: color-mix(in srgb, var(--vscode-foreground) 84%, var(--vscode-descriptionForeground));
+	background: color-mix(in srgb, var(--vscode-input-background) 78%, transparent);
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: 0 8px 24px color-mix(in srgb, var(--vscode-widget-shadow, #000) 6%, transparent);
+}
+
+.microide-workbuddy-studio-suggestion:hover,
+.microide-workbuddy-studio-suggestion:focus-visible {
+	outline: none;
+	border-color: color-mix(in srgb, var(--vscode-focusBorder) 56%, var(--vscode-sideBarSectionHeader-border));
+	color: var(--vscode-foreground);
+	background: var(--vscode-list-hoverBackground);
 }
 
 .microide-workbuddy-studio-contexts {
