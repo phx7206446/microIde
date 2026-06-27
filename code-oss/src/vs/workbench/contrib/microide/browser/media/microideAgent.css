@@ -6008,3 +6008,329 @@ body.microide-workbuddy-workbench .microide-task-browser-launcher .microide-butt
 	color: var(--vscode-descriptionForeground);
 	background: transparent;
 }
+
+/* MicroWorker workspace refinement */
+body.microide-workbuddy-workbench .microide-agent-root.microide-new-task-studio .microide-workbuddy-surface.new-task-studio {
+	padding-top: clamp(24px, 5vh, 64px);
+}
+
+body.microide-workbuddy-workbench .microide-agent-root.microide-new-task-studio .microide-workbuddy-studio {
+	justify-content: flex-start;
+	gap: 16px;
+	min-height: auto;
+	padding-top: clamp(12px, 4vh, 44px);
+}
+
+body.microide-workbuddy-workbench .microide-agent-root.microide-new-task-studio .microide-workbuddy-studio-title {
+	max-width: 760px;
+	font-size: clamp(30px, 3.4vw, 42px);
+	font-weight: 760;
+}
+
+body.microide-workbuddy-workbench .microide-agent-root.microide-new-task-studio .microide-workbuddy-studio-workspace-anchor {
+	margin-bottom: 0;
+}
+
+body.microide-workbuddy-workbench .microide-agent-root.microide-new-task-studio .microide-workbuddy-studio-composer {
+	width: min(820px, 100%);
+	margin-top: 8px;
+	border-radius: 16px;
+	box-shadow: 0 18px 48px color-mix(in srgb, var(--vscode-widget-shadow, #000) 11%, transparent);
+}
+
+body.microide-workbuddy-workbench .microide-agent-root.microide-new-task-studio .microide-workbuddy-studio-input {
+	min-height: 76px;
+	max-height: 118px;
+	font-size: 14px;
+}
+
+body.microide-workbuddy-workbench .microide-agent-root.microide-new-task-studio .microide-workbuddy-studio-suggestions {
+	width: min(820px, 100%);
+	margin-top: 2px;
+}
+
+body.microide-workbuddy-workbench .microide-agent-root.microide-new-task-studio .microide-workbuddy-studio-suggestion {
+	min-height: 34px;
+	border-radius: 999px;
+	text-align: center;
+}
+
+body.microide-workbuddy-workbench .microide-workbuddy-collection-header.automation-hero {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: end;
+	gap: 18px 28px;
+}
+
+.microide-workbuddy-collection-eyebrow {
+	grid-column: 1 / -1;
+	width: fit-content;
+	padding: 5px 11px;
+	border-radius: 999px;
+	color: color-mix(in srgb, var(--vscode-editorWarning-foreground, #ad5d3d) 80%, var(--vscode-foreground));
+	background: color-mix(in srgb, var(--vscode-editorWarning-foreground, #ad5d3d) 12%, transparent);
+	font-size: 11px;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+}
+
+.microide-workbuddy-automation-stats {
+	display: inline-flex;
+	align-items: center;
+	gap: 0;
+	border: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 76%, transparent);
+	border-radius: 10px;
+	background: color-mix(in srgb, var(--vscode-input-background) 90%, transparent);
+	overflow: hidden;
+	box-shadow: 0 10px 28px color-mix(in srgb, var(--vscode-widget-shadow, #000) 7%, transparent);
+}
+
+.microide-workbuddy-automation-stat {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 8px;
+	min-height: 38px;
+	padding: 7px 14px;
+	border-right: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 70%, transparent);
+	white-space: nowrap;
+}
+
+.microide-workbuddy-automation-stat:last-child {
+	border-right: 0;
+}
+
+.microide-workbuddy-automation-stat strong {
+	font-size: 15px;
+	font-weight: 800;
+}
+
+.microide-workbuddy-automation-stat span {
+	color: var(--vscode-descriptionForeground);
+	font-size: 11px;
+	font-weight: 700;
+}
+
+.microide-workbuddy-automation-tabs {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+	width: min(1040px, 100%);
+	margin: -2px auto 2px;
+}
+
+.microide-workbuddy-automation-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 32px;
+	padding: 5px 10px;
+	border: 0;
+	border-radius: 999px;
+	color: var(--vscode-descriptionForeground);
+	background: transparent;
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.microide-workbuddy-automation-tab:hover,
+.microide-workbuddy-automation-tab:focus-visible,
+.microide-workbuddy-automation-tab.active {
+	outline: none;
+	color: var(--vscode-foreground);
+	background: color-mix(in srgb, var(--vscode-input-background) 92%, transparent);
+}
+
+.microide-workbuddy-automation-tab span {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 21px;
+	height: 21px;
+	padding: 0 6px;
+	border-radius: 999px;
+	color: var(--vscode-descriptionForeground);
+	background: color-mix(in srgb, var(--vscode-badge-background) 14%, var(--vscode-sideBar-background));
+	font-size: 11px;
+}
+
+body.microide-workbuddy-workbench .microide-workbuddy-automation-section .microide-workbuddy-card-grid.automation-grid {
+	grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+	gap: 12px;
+}
+
+body.microide-workbuddy-workbench .microide-agent-root.microide-task-detail:not(.microide-task-side-panel-open) .microide-workbuddy-surface.has-task-progress {
+	position: relative;
+	max-height: 132px;
+	padding-right: clamp(304px, 27vw, 360px);
+}
+
+body.microide-workbuddy-workbench .microide-agent-root.microide-task-detail:not(.microide-task-side-panel-open) .microide-workbuddy-progress-strip {
+	width: min(760px, 100%);
+}
+
+.microide-workbuddy-task-progress-card {
+	box-sizing: border-box;
+	position: absolute;
+	top: 18px;
+	right: 28px;
+	z-index: 5;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: min(304px, calc(100% - 56px));
+	max-height: 232px;
+	padding: 13px 14px;
+	border: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 74%, transparent);
+	border-radius: 12px;
+	background: color-mix(in srgb, var(--vscode-input-background) 88%, var(--vscode-editor-background));
+	box-shadow: 0 20px 48px color-mix(in srgb, var(--vscode-widget-shadow, #000) 12%, transparent);
+	overflow: hidden;
+}
+
+.microide-workbuddy-task-progress-card-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.microide-workbuddy-task-progress-card-title {
+	font-size: 13px;
+	font-weight: 780;
+}
+
+.microide-workbuddy-task-progress-card-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 21px;
+	height: 21px;
+	border-radius: 999px;
+	color: var(--vscode-descriptionForeground);
+	background: color-mix(in srgb, var(--vscode-badge-background) 14%, var(--vscode-sideBar-background));
+	font-size: 11px;
+	font-weight: 750;
+}
+
+.microide-workbuddy-task-progress-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 0;
+	overflow: auto;
+}
+
+.microide-workbuddy-task-progress-row {
+	display: grid;
+	grid-template-columns: 18px minmax(0, 1fr);
+	align-items: start;
+	gap: 8px;
+	min-width: 0;
+	color: var(--vscode-foreground);
+	font-size: 12px;
+	line-height: 1.35;
+}
+
+.microide-workbuddy-task-progress-row > .microide-icon {
+	margin-top: 1px;
+	color: var(--vscode-testing-iconPassed, #2ea043);
+}
+
+.microide-workbuddy-task-progress-row.current > .microide-icon,
+.microide-workbuddy-task-progress-row.running > .microide-icon {
+	color: var(--vscode-progressBar-background);
+	animation: microide-spin 1.35s linear infinite;
+}
+
+.microide-workbuddy-task-progress-row.error > .microide-icon {
+	color: var(--vscode-errorForeground);
+	animation: none;
+}
+
+.microide-workbuddy-task-progress-row-copy {
+	min-width: 0;
+}
+
+.microide-workbuddy-task-progress-row-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-weight: 650;
+}
+
+.microide-workbuddy-task-progress-row-detail,
+.microide-workbuddy-task-progress-empty {
+	color: var(--vscode-descriptionForeground);
+	font-size: 11px;
+	line-height: 1.35;
+}
+
+body.microide-workbuddy-workbench .microide-agent-root.microide-task-detail:not(.microide-task-side-panel-open) .microide-agent-transcript {
+	padding-right: clamp(318px, 29vw, 388px);
+}
+
+body.microide-workbuddy-workbench .microide-agent-root.microide-task-side-panel-open .microide-workbuddy-task-progress-card {
+	display: none;
+}
+
+.microide-tool-card {
+	border: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 70%, transparent);
+	border-radius: 10px;
+	background: color-mix(in srgb, var(--vscode-input-background) 72%, var(--vscode-editor-background));
+	overflow: hidden;
+	box-shadow: 0 8px 20px color-mix(in srgb, var(--vscode-widget-shadow, #000) 5%, transparent);
+}
+
+.microide-tool-card.team-tool {
+	padding-left: 0;
+	border-left-color: color-mix(in srgb, var(--vscode-focusBorder) 54%, var(--vscode-sideBarSectionHeader-border));
+}
+
+.microide-tool-summary {
+	grid-template-columns: 14px minmax(0, 1fr) auto 22px;
+	min-height: 40px;
+	padding: 8px 11px;
+	background: transparent;
+}
+
+.microide-tool-card.team-tool .microide-tool-summary {
+	grid-template-columns: 14px minmax(0, 1fr) auto auto 22px;
+}
+
+.microide-tool-summary:hover,
+.microide-tool-summary:focus-visible {
+	background: color-mix(in srgb, var(--vscode-list-hoverBackground) 72%, transparent);
+}
+
+.microide-tool-body {
+	padding: 0 12px 12px 33px;
+}
+
+.microide-tool-card > .microide-diff {
+	margin: 0 12px 12px 33px;
+}
+
+@media (max-width: 1180px) {
+	body.microide-workbuddy-workbench .microide-agent-root.microide-task-detail:not(.microide-task-side-panel-open) .microide-workbuddy-surface.has-task-progress {
+		padding-right: 28px;
+	}
+
+	body.microide-workbuddy-workbench .microide-agent-root.microide-task-detail:not(.microide-task-side-panel-open) .microide-agent-transcript {
+		padding-right: 34px;
+	}
+
+	.microide-workbuddy-task-progress-card {
+		display: none;
+	}
+
+	body.microide-workbuddy-workbench .microide-workbuddy-collection-header.automation-hero {
+		grid-template-columns: 1fr;
+	}
+
+	.microide-workbuddy-automation-stats {
+		width: fit-content;
+	}
+}
+/* End MicroWorker workspace refinement */

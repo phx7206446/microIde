@@ -108,6 +108,7 @@ interface IMicroIDEWorkbenchCard {
 }
 
 interface IMicroIDEWorkbenchSection {
+	readonly id: string;
 	readonly title: string;
 	readonly description: string;
 	readonly cards: readonly IMicroIDEWorkbenchCard[];
@@ -118,10 +119,6 @@ interface IMicroIDEQuickPrompt {
 	readonly prompt: string;
 }
 
-interface IMicroIDETaskCategory {
-	readonly label: string;
-	readonly prompt: string;
-}
 
 interface IMicroIDEPluginToast {
 	readonly id: number;
@@ -134,21 +131,6 @@ const WORKBUDDY_NAV_ITEMS: readonly IMicroIDEWorkbenchNavItem[] = [
 	{ id: 'plugins', label: localize('microide.workbuddy.skillsNav', "技能"), description: localize('microide.workbuddy.pluginsDescription', "技能商店和预设"), icon: Codicon.extensions },
 	{ id: 'automation', label: localize('microide.workbuddy.automation', "自动化"), description: localize('microide.workbuddy.automationDescription', "可复用的编码流程"), icon: Codicon.calendar }
 ];
-
-const WORKBUDDY_WORKING_CATEGORIES: readonly IMicroIDETaskCategory[] = [
-	{ label: localize('microide.workbuddy.categoryDocumentation', "文档"), prompt: '为这个任务起草一份简洁的工作文档，包含目标、背景、决策和下一步行动。' },
-	{ label: localize('microide.workbuddy.categoryFinancialServices', "金融服务"), prompt: '按金融服务工作流分析这个任务，明确输入、控制点、风险和最终交付物。' },
-	{ label: localize('microide.workbuddy.categoryWorkplaceHelper', "办公助手"), prompt: '帮助整理这个办公任务，澄清需求，生成短计划，并产出可执行结果。' },
-	{ label: localize('microide.workbuddy.categoryMore', "更多"), prompt: '探索这个任务的其他处理方式，并建议最合适的下一步行动。' }
-];
-
-const WORKBUDDY_CODING_CATEGORIES: readonly IMicroIDETaskCategory[] = [
-	{ label: localize('microide.workbuddy.categoryDailyDevelopment', "日常开发"), prompt: '处理这个日常开发任务，检查相关文件，做聚焦修改，并运行最小但有效的验证。' },
-	{ label: localize('microide.workbuddy.categoryWebsiteDevelopment', "网站开发"), prompt: '处理这个网站开发任务，优先关注布局、响应式表现、细节打磨和验证。' },
-	{ label: localize('microide.workbuddy.categoryAgentApps', "智能体应用"), prompt: '构建或优化智能体应用工作流，对齐界面、工具状态和执行反馈。' },
-	{ label: localize('microide.workbuddy.categoryMoreCoding', "更多"), prompt: '探索这个工作区的其他编码方案，并选择最稳妥的实现路径。' }
-];
-
 
 const WORKBUDDY_FALLBACK_INSTALLABLE_PLUGINS: readonly IMicroClaudePluginInfo[] = [
 	{ id: 'frontend-design@claude-plugins-official', name: 'Frontend Design', description: localize('microide.workbuddy.pluginFrontendDesignDescription', "创建精致的前端界面和视觉系统。"), marketplace: 'claude-plugins-official', status: 'available', actionCommand: '/plugin install frontend-design@claude-plugins-official' },
@@ -172,8 +154,9 @@ const WORKBUDDY_NEW_TASK_SUGGESTIONS: Record<MicroIDETaskCreationMode, readonly 
 
 const WORKBUDDY_AUTOMATION_SECTIONS: readonly IMicroIDEWorkbenchSection[] = [
 	{
+		id: 'office',
 		title: localize('microide.workbuddy.automationOfficeTitle', "办公"),
-		description: localize('microide.workbuddy.automationOfficeDescription', "把汇报、纪要和需求整理变成可复用流程。"),
+		description: localize('microide.workbuddy.automationOfficeDescription', "把汇报、纪要、需求整理变成可复用流程。"),
 		cards: [
 			{ title: localize('microide.workbuddy.automationWeekly', "每周工作报告"), description: localize('microide.workbuddy.automationWeeklyDescription', "汇总提交、已合并 PR 和待处理风险。"), meta: localize('microide.workbuddy.automationWeeklyMeta', "每周"), icon: Codicon.graphLine, prompt: '为这个仓库创建每周工程工作报告模板，包含提交、PR、已交付工作、阻塞项和下一步。' },
 			{ title: localize('microide.workbuddy.automationMeetingNotes', "会议纪要整理"), description: localize('microide.workbuddy.automationMeetingNotesDescription', "从讨论内容提炼决策、待办和风险。"), meta: localize('microide.workbuddy.automationTemplateMeta', "模板"), icon: Codicon.commentDiscussion, prompt: '创建会议纪要整理模板，输出背景、关键结论、待办、负责人、时间点和需要追问的问题。' },
@@ -182,18 +165,35 @@ const WORKBUDDY_AUTOMATION_SECTIONS: readonly IMicroIDEWorkbenchSection[] = [
 		]
 	},
 	{
+		id: 'coding',
 		title: localize('microide.workbuddy.automationCodingTitle', "编码"),
-		description: localize('microide.workbuddy.automationCodingDescription', "把评审、发布、测试和依赖检查固化为工程套路。"),
+		description: localize('microide.workbuddy.automationCodingDescription', "把评审、变更分析和工程执行固化为套路。"),
 		cards: [
 			{ title: localize('microide.workbuddy.automationPrDigest', "PR 摘要"), description: localize('microide.workbuddy.automationPrDigestDescription', "汇总变更、评审记录和验证状态。"), meta: localize('microide.workbuddy.automationDailyMeta', "每日"), icon: Codicon.gitPullRequest, prompt: '为这个仓库构建 PR 摘要工作流，包含变更范围、评审风险和验证命令。' },
-			{ title: localize('microide.workbuddy.automationRelease', "发布检查清单"), description: localize('microide.workbuddy.automationReleaseDescription', "发布前准备验证任务。"), meta: localize('microide.workbuddy.automationTemplateMeta', "模板"), icon: Codicon.checklist, prompt: '为这个项目创建发布检查清单，包含构建、测试、迁移检查、发布和回滚步骤。' },
-			{ title: localize('microide.workbuddy.automationDependency', "依赖审计"), description: localize('microide.workbuddy.automationDependencyDescription', "跟踪过期依赖和高风险更新。"), meta: localize('microide.workbuddy.automationMonthlyMeta', "每月"), icon: Codicon.package, prompt: '为这个项目设计依赖审计工作流，明确包管理器、命令、风险等级和报告输出。' },
+			{ title: localize('microide.workbuddy.automationReviewChecklist', "代码审查清单"), description: localize('microide.workbuddy.automationReviewChecklistDescription', "覆盖风险、回归、安全和可维护性。"), meta: localize('microide.workbuddy.automationReviewMeta', "审查"), icon: Codicon.shield, prompt: '创建代码审查清单，覆盖行为变更、错误处理、性能、安全、测试和文档。' },
+			{ title: localize('microide.workbuddy.automationChangeImpact', "变更影响分析"), description: localize('microide.workbuddy.automationChangeImpactDescription', "识别受影响模块、入口和验证路径。"), meta: localize('microide.workbuddy.automationAnalysisMeta', "分析"), icon: Codicon.graph, prompt: '分析当前变更的影响范围，列出受影响模块、用户路径、潜在回归点和最小验证计划。' }
+		]
+	},
+	{
+		id: 'quality',
+		title: localize('microide.workbuddy.automationQualityTitle', "质量"),
+		description: localize('microide.workbuddy.automationQualityDescription', "沉淀测试、依赖和回归验证流程。"),
+		cards: [
 			{ title: localize('microide.workbuddy.automationTestPlan', "测试补全计划"), description: localize('microide.workbuddy.automationTestPlanDescription', "为关键路径生成聚焦测试任务。"), meta: localize('microide.workbuddy.automationQualityMeta', "质量"), icon: Codicon.beaker, prompt: '创建测试补全工作流，先识别关键路径和风险，再列出最小测试集合和验证命令。' },
-			{ title: localize('microide.workbuddy.automationReviewChecklist', "代码审查清单"), description: localize('microide.workbuddy.automationReviewChecklistDescription', "覆盖风险、回归、安全和可维护性。"), meta: localize('microide.workbuddy.automationReviewMeta', "审查"), icon: Codicon.shield, prompt: '创建代码审查清单，覆盖行为变更、错误处理、性能、安全、测试和文档。' }
+			{ title: localize('microide.workbuddy.automationDependency', "依赖审计"), description: localize('microide.workbuddy.automationDependencyDescription', "跟踪过期依赖和高风险更新。"), meta: localize('microide.workbuddy.automationMonthlyMeta', "每月"), icon: Codicon.package, prompt: '为这个项目设计依赖审计工作流，明确包管理器、命令、风险等级和报告输出。' },
+			{ title: localize('microide.workbuddy.automationRegression', "回归验证清单"), description: localize('microide.workbuddy.automationRegressionDescription', "把修复后的验证路径整理为清单。"), meta: localize('microide.workbuddy.automationTemplateMeta', "模板"), icon: Codicon.checklist, prompt: '创建回归验证清单，覆盖复现步骤、修复验证、边界输入、相关页面和失败回退方案。' }
+		]
+	},
+	{
+		id: 'release',
+		title: localize('microide.workbuddy.automationReleaseTitle', "发布"),
+		description: localize('microide.workbuddy.automationReleaseDescriptionGroup', "把上线准备和发布后巡检变成固定模板。"),
+		cards: [
+			{ title: localize('microide.workbuddy.automationRelease', "发布检查清单"), description: localize('microide.workbuddy.automationReleaseDescription', "发布前准备验证任务。"), meta: localize('microide.workbuddy.automationTemplateMeta', "模板"), icon: Codicon.checklist, prompt: '为这个项目创建发布检查清单，包含构建、测试、迁移检查、发布和回滚步骤。' },
+			{ title: localize('microide.workbuddy.automationPostRelease', "发布后巡检"), description: localize('microide.workbuddy.automationPostReleaseDescription', "整理关键指标、日志和用户反馈检查。"), meta: localize('microide.workbuddy.automationTemplateMeta', "模板"), icon: Codicon.sync, prompt: '创建发布后巡检模板，列出关键指标、日志检查、错误告警、用户反馈和需要复盘的事项。' }
 		]
 	}
 ];
-
 
 interface IMicroIDESlashAction {
 	readonly section: string;
@@ -277,6 +277,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 	private mentionActiveIndex = 0;
 	private activeWorkbenchSurface: MicroIDEWorkbenchSurface = 'task';
 	private taskCreationMode: MicroIDETaskCreationMode = 'coding';
+	private automationCategoryFilter = 'all';
 	private improvingPrompt = false;
 	private showingNewTaskStudio = true;
 	private taskSidePanelVisible = false;
@@ -1092,8 +1093,10 @@ export class MicroIDEAgentPanelView extends ViewPane {
 
 	private renderTaskLauncherSurface(container: HTMLElement, state: IMicroIDEAgentState): void {
 		const mode = this.taskCreationMode;
-		const categories = mode === 'working' ? WORKBUDDY_WORKING_CATEGORIES : WORKBUDDY_CODING_CATEGORIES;
-		const suggestions = WORKBUDDY_NEW_TASK_SUGGESTIONS[mode];
+		const suggestions = [
+			...WORKBUDDY_NEW_TASK_SUGGESTIONS.coding,
+			...WORKBUDDY_NEW_TASK_SUGGESTIONS.working
+		].slice(0, 6);
 		const studio = dom.append(container, dom.$('.microide-workbuddy-studio'));
 		let input: HTMLTextAreaElement | undefined;
 
@@ -1101,50 +1104,16 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const workspaceFolders = this.workspaceContextService.getWorkspace().folders;
 		this.workspaceButton = dom.append(workspaceAnchor, dom.$('button.microide-workbuddy-studio-workspace-button')) as HTMLButtonElement;
 		this.workspaceButton.type = 'button';
-		this.workspaceButton.title = localize('microide.workbuddy.workspaceTitle', "选择任务工作区上下文");
+		this.workspaceButton.title = localize('microide.workbuddy.workspaceTitle', "选择任务工作区");
 		appendIcon(this.workspaceButton, Codicon.folder);
 		const workspaceLabel = dom.append(this.workspaceButton, dom.$('span'));
 		workspaceLabel.textContent = workspaceFolders[0]?.name ?? localize('microide.workbuddy.noWorkspaceShort', "无工作区");
 		appendIcon(this.workspaceButton, Codicon.chevronDown);
-		this.workspaceButton.setAttribute('aria-haspopup', 'true');
-		this.workspaceButton.addEventListener('click', () => this.toggleWorkspacePopover(this.microIDEAgentService.getState()));
-		this.workspacePopoverElement = dom.append(workspaceAnchor, dom.$('.microide-workbuddy-popover.workspace'));
-		this.renderWorkspacePopover(state, false);
+		this.workspaceButton.addEventListener('click', () => void this.openWorkspaceFolderPicker());
+		this.workspacePopoverElement = undefined;
 
 		const title = dom.append(studio, dom.$('.microide-workbuddy-studio-title'));
-		title.textContent = mode === 'working'
-			? localize('microide.workbuddy.workplaceSuperpower', "MicroWorker 你的办公超能力")
-			: localize('microide.workbuddy.developmentSuperpower', "MicroWorker 你的开发超能力");
-
-		const modes = dom.append(studio, dom.$('.microide-workbuddy-mode-row.studio-modes'));
-		for (const option of [
-			{ id: 'working' as const, label: localize('microide.workbuddy.modeWorking', "工作") },
-			{ id: 'coding' as const, label: localize('microide.workbuddy.modeCoding', "编码") }
-		]) {
-			const button = dom.append(modes, dom.$('button.microide-workbuddy-mode-pill')) as HTMLButtonElement;
-			button.type = 'button';
-			button.classList.toggle('active', option.id === mode);
-			button.textContent = option.label;
-			button.addEventListener('click', () => {
-				this.taskCreationMode = option.id;
-				this.renderState();
-			});
-		}
-
-		const categoryRow = dom.append(studio, dom.$('.microide-workbuddy-category-row'));
-		for (const category of categories) {
-			const chip = dom.append(categoryRow, dom.$('button.microide-workbuddy-category-chip')) as HTMLButtonElement;
-			chip.type = 'button';
-			chip.textContent = category.label;
-			chip.addEventListener('click', () => {
-				if (!input) {
-					return;
-				}
-				input.value = category.prompt;
-				input.focus();
-				input.setSelectionRange(input.value.length, input.value.length);
-			});
-		}
+		title.textContent = localize('microide.workbuddy.intelligentWorkspaceTitle', "MicroWorker 你的智能工作台");
 
 		const composer = dom.append(studio, dom.$('.microide-workbuddy-studio-composer'));
 		input = dom.append(composer, dom.$('textarea.microide-workbuddy-studio-input')) as HTMLTextAreaElement;
@@ -1155,7 +1124,6 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		this.turnButton = undefined;
 		this.permissionModeButton = undefined;
 		this.permissionPopoverElement = undefined;
-		// The studio owns the top workspace selector, so keep its button/popover alive while rebuilding composer controls.
 		this.connectorsButton = undefined;
 		this.connectorsPopoverElement = undefined;
 		input.rows = 3;
@@ -1239,7 +1207,6 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			});
 		}
 	}
-
 	private renderStudioFileContexts(container: HTMLElement): void {
 		dom.reset(container);
 		const contexts = this.getVisibleFileContexts();
@@ -1390,8 +1357,44 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			event.stopPropagation();
 			this.toggleTaskSidePanel();
 		});
+
+		const progress = dom.append(container, dom.$('.microide-workbuddy-task-progress-card'));
+		this.renderTaskProgressCard(progress, state);
 	}
 
+	private renderTaskProgressCard(container: HTMLElement, state: IMicroIDEAgentState): void {
+		const presentation = getWorkBuddyTaskStatusPresentation(state);
+		const tools = state.messages.filter(message => message.role === 'tool' && message.sessionId === state.activeSessionId).slice(-5);
+		const header = dom.append(container, dom.$('.microide-workbuddy-task-progress-card-head'));
+		const title = dom.append(header, dom.$('.microide-workbuddy-task-progress-card-title'));
+		title.textContent = localize('microide.workbuddy.progressCardTitle', "Progress");
+		const count = dom.append(header, dom.$('.microide-workbuddy-task-progress-card-count'));
+		count.textContent = String(Math.max(1, tools.length || (state.turnStatus ? 1 : 0)));
+
+		const list = dom.append(container, dom.$('.microide-workbuddy-task-progress-list'));
+		const statusRow = dom.append(list, dom.$('.microide-workbuddy-task-progress-row.current'));
+		appendIcon(statusRow, presentation.icon);
+		const statusText = dom.append(statusRow, dom.$('span'));
+		statusText.textContent = state.turnStatus ? presentation.label + ' / ' + formatTurnStatusDetail(state.turnStatus) : presentation.label;
+
+		if (!tools.length) {
+			const empty = dom.append(list, dom.$('.microide-workbuddy-task-progress-empty'));
+			empty.textContent = localize('microide.workbuddy.progressNoTools', "工具调用会在这里汇总。");
+			return;
+		}
+
+		for (const tool of tools) {
+			const row = dom.append(list, dom.$('.microide-workbuddy-task-progress-row'));
+			row.classList.toggle('error', tool.state === 'error' || Boolean(tool.isError));
+			row.classList.toggle('running', tool.state === 'streaming');
+			appendIcon(row, tool.state === 'streaming' ? Codicon.sync : tool.state === 'error' || tool.isError ? Codicon.error : Codicon.check);
+			const copy = dom.append(row, dom.$('.microide-workbuddy-task-progress-row-copy'));
+			const label = dom.append(copy, dom.$('.microide-workbuddy-task-progress-row-label'));
+			label.textContent = formatToolTitle(tool);
+			const detail = dom.append(copy, dom.$('.microide-workbuddy-task-progress-row-detail'));
+			detail.textContent = formatToolInlineMeta(tool);
+		}
+	}
 	private renderWorkBuddyTaskStatus(container: HTMLElement, state: IMicroIDEAgentState): void {
 		const presentation = getWorkBuddyTaskStatusPresentation(state);
 		const pill = dom.append(container, dom.$('.microide-workbuddy-task-status'));
@@ -1661,27 +1664,63 @@ export class MicroIDEAgentPanelView extends ViewPane {
 	}
 
 	private renderAutomationSurface(container: HTMLElement): void {
-		const header = dom.append(container, dom.$('.microide-workbuddy-collection-header'));
+		const totalCount = WORKBUDDY_AUTOMATION_SECTIONS.reduce((sum, section) => sum + section.cards.length, 0);
+		const visibleSections = this.automationCategoryFilter === 'all'
+			? WORKBUDDY_AUTOMATION_SECTIONS
+			: WORKBUDDY_AUTOMATION_SECTIONS.filter(section => section.id === this.automationCategoryFilter);
+
+		const header = dom.append(container, dom.$('.microide-workbuddy-collection-header automation-hero'));
+		const eyebrow = dom.append(header, dom.$('.microide-workbuddy-collection-eyebrow'));
+		eyebrow.textContent = localize('microide.workbuddy.automationEyebrow', "AUTOMATION TEMPLATES");
 		const title = dom.append(header, dom.$('.microide-workbuddy-collection-title'));
 		title.textContent = localize('microide.workbuddy.automationSurfaceTitle', "自动化");
 		const subtitle = dom.append(header, dom.$('.microide-workbuddy-collection-subtitle'));
 		subtitle.textContent = localize('microide.workbuddy.automationSurfaceDescription', "把常用办公和工程流程沉淀成可复用提示词，点击后直接开启任务。");
-		const sections = dom.append(container, dom.$('.microide-workbuddy-automation-sections'));
+
+		const stats = dom.append(header, dom.$('.microide-workbuddy-automation-stats'));
+		for (const item of [
+			{ value: String(totalCount), label: localize('microide.workbuddy.automationTemplates', "模板") },
+			{ value: String(WORKBUDDY_AUTOMATION_SECTIONS.length), label: localize('microide.workbuddy.automationCategories', "分类") }
+		]) {
+			const stat = dom.append(stats, dom.$('.microide-workbuddy-automation-stat'));
+			const value = dom.append(stat, dom.$('strong'));
+			value.textContent = item.value;
+			const label = dom.append(stat, dom.$('span'));
+			label.textContent = item.label;
+		}
+
+		const tabs = dom.append(container, dom.$('.microide-workbuddy-automation-tabs'));
+		const appendTab = (id: string, label: string, count: number): void => {
+			const tab = dom.append(tabs, dom.$('button.microide-workbuddy-automation-tab')) as HTMLButtonElement;
+			tab.type = 'button';
+			tab.classList.toggle('active', this.automationCategoryFilter === id);
+			tab.textContent = label;
+			const badge = dom.append(tab, dom.$('span'));
+			badge.textContent = String(count);
+			tab.addEventListener('click', () => {
+				this.automationCategoryFilter = id;
+				this.renderState();
+			});
+		};
+		appendTab('all', localize('microide.workbuddy.automationAll', "全部"), totalCount);
 		for (const section of WORKBUDDY_AUTOMATION_SECTIONS) {
+			appendTab(section.id, section.title, section.cards.length);
+		}
+
+		const sections = dom.append(container, dom.$('.microide-workbuddy-automation-sections'));
+		for (const section of visibleSections) {
 			const block = dom.append(sections, dom.$('.microide-workbuddy-automation-section'));
 			const sectionHead = dom.append(block, dom.$('.microide-workbuddy-automation-section-head'));
 			const sectionTitle = dom.append(sectionHead, dom.$('.microide-workbuddy-automation-section-title'));
 			sectionTitle.textContent = section.title;
 			const sectionDescription = dom.append(sectionHead, dom.$('.microide-workbuddy-automation-section-description'));
 			sectionDescription.textContent = section.description;
-			const grid = dom.append(block, dom.$('.microide-workbuddy-card-grid'));
+			const grid = dom.append(block, dom.$('.microide-workbuddy-card-grid automation-grid'));
 			for (const card of section.cards) {
 				this.appendWorkbenchCard(grid, card, { newTask: true });
 			}
 		}
 	}
-
-
 	private appendWorkbenchCard(container: HTMLElement, card: IMicroIDEWorkbenchCard, options?: { readonly newTask?: boolean }): void {
 		const button = dom.append(container, dom.$('button.microide-workbuddy-card')) as HTMLButtonElement;
 		button.type = 'button';
@@ -4852,7 +4891,7 @@ class TranscriptRenderer extends Disposable {
 		}
 		const openKey = message.toolUseId ?? message.id;
 		const storedOpen = this.toolOpenState.get(openKey);
-		const isOpen = storedOpen ?? shouldAutoOpenTool(message);
+		const isOpen = storedOpen ?? false;
 		card.classList.toggle('open', isOpen);
 
 		const summary = dom.append(card, dom.$('button.microide-tool-summary')) as HTMLButtonElement;
@@ -5328,9 +5367,6 @@ function formatToolTitle(message: IMicroIDEAgentMessage): string {
 	return toolName;
 }
 
-function shouldAutoOpenTool(message: IMicroIDEAgentMessage): boolean {
-	return message.state === 'error' || Boolean(message.isError);
-}
 
 function formatToolInlineMeta(message: IMicroIDEAgentMessage): string {
 	const askUserInput = parseAskUserQuestionInput(message.input);
