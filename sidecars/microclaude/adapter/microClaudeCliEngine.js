@@ -7,6 +7,9 @@ import { MicroClaudeMessageMapper } from './microClaudeMessageMapper.js';
 const MAX_STDERR_LINES = 40;
 const CONTROL_REQUEST_TIMEOUT_MS = 15000;
 const PROMPT_IMPROVE_TIMEOUT_MS = 60000;
+const TURN_CANCEL_GRACE_MS = 5000;
+const TURN_CANCEL_KILL_GRACE_MS = 2500;
+const ESCAPE_KEY = '\x1b';
 const AGENT_TEAM_ENV = Object.freeze({
   CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS: '1',
   CLAUDE_CODE_ENABLE_TASKS: '1',
@@ -391,8 +394,7 @@ export class MicroClaudeCliEngine {
     handle.activeTurn = turn;
 
     const abort = () => {
-      handle.kill();
-      turn.reject(abortError());
+      handle.cancelTurn(turn);
     };
 
     signal?.addEventListener('abort', abort, { once: true });
@@ -455,8 +457,12 @@ export class MicroClaudeCliEngine {
       return false;
     }
 
-    handle.kill();
-    this.#handles.delete(sessionId);
+    if (handle.activeTurn) {
+      handle.cancelTurn(handle.activeTurn);
+    } else {
+      handle.kill();
+      this.#handles.delete(sessionId);
+    }
     return true;
   }
 
@@ -544,11 +550,57 @@ export class MicroClaudeCliEngine {
       child,
       mapper,
       activeTurn: null,
+      cancelTimer: undefined,
       closed: false,
       stderrLines: [],
       kill: () => {
         if (!child.killed) {
           child.kill();
+        }
+      },
+      clearCancelTimer: () => {
+        if (handle.cancelTimer) {
+          clearTimeout(handle.cancelTimer);
+          handle.cancelTimer = undefined;
+        }
+      },
+      cancelTurn: turn => {
+        if (!turn || turn.cancelRequested) {
+          return;
+        }
+        turn.cancelRequested = true;
+
+        let requestedInteractiveCancel = false;
+        try {
+          // The interactive CLI listens for Escape on a TTY. In stream-json mode stdin is
+          // an NDJSON pipe, so a raw Escape byte would corrupt the next JSON message.
+          if (child.stdin?.isTTY && !child.killed && child.stdin?.writable && !child.stdin.destroyed) {
+            child.stdin.write(ESCAPE_KEY);
+            requestedInteractiveCancel = true;
+          }
+        } catch {
+          requestedInteractiveCancel = false;
+        }
+
+        const hardStop = () => {
+          if (handle.activeTurn !== turn) {
+            return;
+          }
+          handle.kill();
+          handle.clearCancelTimer();
+          handle.cancelTimer = setTimeout(() => {
+            if (handle.activeTurn === turn) {
+              turn.reject(abortError());
+              handle.activeTurn = null;
+            }
+          }, TURN_CANCEL_KILL_GRACE_MS);
+        };
+
+        handle.clearCancelTimer();
+        if (requestedInteractiveCancel) {
+          handle.cancelTimer = setTimeout(hardStop, TURN_CANCEL_GRACE_MS);
+        } else {
+          hardStop();
         }
       },
     };
@@ -561,11 +613,15 @@ export class MicroClaudeCliEngine {
         ? `microClaude process exited with signal ${signal}`
         : `microClaude process exited with code ${code}`);
 
+      handle.clearCancelTimer();
       if (handle.activeTurn) {
         const message = signal
           ? `microClaude process exited with signal ${signal}`
           : `microClaude process exited with code ${code}`;
-        handle.activeTurn.reject(new Error(withStderr(message, handle.stderrLines)));
+        const error = handle.activeTurn.cancelRequested
+          ? abortError()
+          : new Error(withStderr(message, handle.stderrLines));
+        handle.activeTurn.reject(error);
         handle.activeTurn = null;
       }
     });
@@ -575,6 +631,7 @@ export class MicroClaudeCliEngine {
       this.#handles.delete(session.id);
       this.#dropPermissionsForHandle(handle);
       this.#dropControlRequestsForHandle(handle, err?.message || 'microClaude process error');
+      handle.clearCancelTimer();
       handle.activeTurn?.reject(err);
       handle.activeTurn = null;
     });
@@ -621,7 +678,10 @@ export class MicroClaudeCliEngine {
     }
 
     if (mapped.done && handle.activeTurn) {
-      if (mapped.error) {
+      handle.clearCancelTimer();
+      if (handle.activeTurn.cancelRequested) {
+        handle.activeTurn.reject(abortError());
+      } else if (mapped.error) {
         handle.activeTurn.reject(mapped.error);
       } else {
         handle.activeTurn.resolve();
@@ -913,6 +973,7 @@ function createTurn() {
     done,
     resolve: resolveTurn,
     reject: rejectTurn,
+    cancelRequested: false,
   };
 }
 

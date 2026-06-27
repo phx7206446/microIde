@@ -1918,17 +1918,22 @@ body.microide-workbuddy-workbench .microide-workbuddy-surface.new-task-studio {
 	flex: 1;
 	max-height: none;
 	overflow: auto;
-	padding: clamp(24px, 4vh, 44px) 34px clamp(18px, 3vh, 28px);
-	background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--vscode-button-background) 9%, transparent), transparent 34%), var(--vscode-editor-background);
+	padding: clamp(20px, 3.4vh, 38px) 34px clamp(18px, 3vh, 28px);
+	background:
+		radial-gradient(circle at 1px 1px, rgba(31, 41, 55, 0.055) 1px, transparent 0) 0 0 / 22px 22px,
+		linear-gradient(180deg, rgba(245, 249, 248, 0.84) 0%, var(--vscode-editor-background) 82%);
 }
 
 body.microide-workbuddy-workbench .microide-agent-root.microide-collection-surface .microide-workbuddy-surface {
 	flex: 1;
 	max-height: none;
 	overflow: auto;
-	justify-content: center;
-	gap: 14px;
-	padding: clamp(34px, 8vh, 82px) 34px;
+	justify-content: flex-start;
+	gap: 18px;
+	padding: clamp(26px, 4.5vh, 52px) 34px 34px;
+	background:
+		radial-gradient(circle at 1px 1px, rgba(31, 41, 55, 0.045) 1px, transparent 0) 0 0 / 22px 22px,
+		linear-gradient(180deg, rgba(250, 250, 248, 0.86) 0%, var(--vscode-editor-background) 92%);
 }
 
 body.microide-workbuddy-workbench .microide-workbuddy-launcher,
@@ -2142,19 +2147,20 @@ body.microide-workbuddy-workbench .microide-workbuddy-launcher-subtitle {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 12px;
+	justify-content: center;
+	gap: 10px;
 	width: min(1088px, 100%);
-	min-height: 100%;
+	min-height: min(720px, 100%);
 	margin: 0 auto;
-	padding-bottom: 8px;
+	padding: clamp(18px, 3vh, 42px) 0;
 }
 
 .microide-workbuddy-studio-title {
-	max-width: 860px;
+	max-width: 820px;
 	color: var(--vscode-foreground);
-	font-size: 28px;
-	font-weight: 700;
-	line-height: 1.18;
+	font-size: 30px;
+	font-weight: 740;
+	line-height: 1.16;
 	text-align: center;
 }
 
@@ -2209,20 +2215,20 @@ body.microide-workbuddy-workbench .microide-workbuddy-launcher-subtitle {
 .microide-workbuddy-studio-composer {
 	box-sizing: border-box;
 	position: relative;
-	width: min(960px, 100%);
-	margin-top: auto;
-	padding: 10px;
+	width: min(780px, 100%);
+	margin-top: 12px;
+	padding: 9px;
 	border: 1px solid color-mix(in srgb, var(--vscode-focusBorder) 42%, var(--vscode-sideBarSectionHeader-border));
-	border-radius: 8px;
-	background: color-mix(in srgb, var(--vscode-editorWidget-background) 88%, var(--vscode-editor-background));
-	box-shadow: 0 12px 34px color-mix(in srgb, var(--vscode-widget-shadow, #000) 24%, transparent);
+	border-radius: 12px;
+	background: color-mix(in srgb, var(--vscode-editorWidget-background) 92%, var(--vscode-editor-background));
+	box-shadow: 0 18px 46px color-mix(in srgb, var(--vscode-widget-shadow, #000) 14%, transparent);
 }
 
 .microide-workbuddy-studio-input {
 	box-sizing: border-box;
 	width: 100%;
-	min-height: 76px;
-	max-height: 130px;
+	min-height: 64px;
+	max-height: 112px;
 	resize: vertical;
 	padding: 6px 10px;
 	border: 0;
@@ -2289,10 +2295,17 @@ body.microide-workbuddy-workbench .microide-workbuddy-launcher-subtitle {
 }
 
 .microide-workbuddy-studio .microide-workbuddy-card-grid.starters {
-	width: min(1088px, 100%);
-	margin-top: 4px;
-	margin-bottom: 2px;
+	width: min(780px, 100%);
+	grid-template-columns: 1fr;
+	gap: 8px;
+	margin-top: 10px;
+	margin-bottom: 0;
 	padding-bottom: 0;
+}
+
+.microide-workbuddy-studio .microide-workbuddy-card-grid.starters .microide-workbuddy-card {
+	min-height: 48px;
+	padding: 11px 16px;
 }
 
 .microide-workbuddy-studio-contexts {
@@ -5537,7 +5550,7 @@ body.microide-workbuddy-workbench .microide-workbuddy-main {
 }
 
 body.microide-workbuddy-workbench .microide-agent-root.microide-task-side-panel-open {
-	--microide-task-side-panel-width: clamp(340px, 32vw, 470px);
+	--microide-task-side-panel-width: clamp(440px, 36vw, 620px);
 }
 
 body.microide-workbuddy-workbench .microide-agent-root.microide-task-side-panel-open .microide-agent-workbench,
@@ -5644,7 +5657,7 @@ body.microide-workbuddy-workbench .microide-task-side-panel-body {
 	flex-direction: column;
 	min-height: 0;
 	overflow: hidden;
-	padding: 18px;
+	padding: 16px;
 }
 
 body.microide-workbuddy-workbench .microide-task-browser-header,
@@ -5694,7 +5707,7 @@ body.microide-workbuddy-workbench .microide-task-browser-frame {
 	display: grid;
 	flex: 1;
 	isolation: isolate;
-	margin-top: 14px;
+	margin-top: 12px;
 	min-height: 0;
 	overflow: hidden;
 	position: relative;
@@ -5746,7 +5759,7 @@ body.microide-workbuddy-workbench .microide-task-changes-list .microide-diff {
 
 @media (max-width: 920px) {
 	body.microide-workbuddy-workbench .microide-agent-root.microide-task-side-panel-open {
-		--microide-task-side-panel-width: min(380px, 48vw);
+		--microide-task-side-panel-width: min(420px, 52vw);
 	}
 }
 

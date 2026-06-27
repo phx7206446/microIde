@@ -2092,16 +2092,21 @@ export class MicroIDEAgentPanelView extends ViewPane {
 
 		const zoomFactor = getZoomFactor(mainWindow);
 		const snap = (value: number): number => Math.floor(value * zoomFactor) / zoomFactor;
+		const width = Math.max(0, snap(rect.width));
+		const height = Math.max(0, snap(rect.height));
+		const targetViewportWidth = 980;
+		const browserScale = width > 0 ? Math.min(1, Math.max(0.42, width / targetViewportWidth)) : 1;
 		const cornerRadius = parseFloat(mainWindow.getComputedStyle(host).borderTopLeftRadius ?? '0') || 0;
 		const windowId = (mainWindow as Window & { readonly vscodeWindowId: number }).vscodeWindowId;
 		void model.layout({
 			windowId,
 			x: snap(rect.left),
 			y: snap(rect.top),
-			width: Math.max(0, snap(rect.width)),
-			height: Math.max(0, snap(rect.height)),
+			width,
+			height,
 			zoomFactor,
-			cornerRadius
+			cornerRadius,
+			...(browserScale < 0.995 ? { emulation: { scale: browserScale } } : {})
 		}).then(() => {
 			if (this.taskBrowserModel === model && this.isTaskBrowserVisible()) {
 				return model.setVisible(true);

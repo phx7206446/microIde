@@ -787,12 +787,12 @@ function sendMessage(params) {
     engine.resetSession?.(sessionId, { reason: 'modeChanged', previousMode, nextMode });
     emit(sessionId, 'session.status', { status: session.status, session: publicSession(session), modeChanged: true });
   }
+
   const controller = new AbortController();
-  activeTurns.set(sessionId, controller);
   sessions.updateStatus(sessionId, 'busy');
   emit(sessionId, 'session.status', { status: 'busy' });
 
-  void engine
+  const turnPromise = engine
     .sendMessage({
       session,
       prompt,
@@ -819,28 +819,31 @@ function sendMessage(params) {
       activeTurns.delete(sessionId);
     });
 
+  activeTurns.set(sessionId, { controller, turnPromise });
   return { accepted: true, sessionId };
 }
 
-function cancelSession(params) {
+async function cancelSession(params) {
   const sessionId = requireString(params.sessionId, 'sessionId');
-  const controller = activeTurns.get(sessionId);
-  if (!controller) {
+  const activeTurn = activeTurns.get(sessionId);
+  if (!activeTurn) {
     return { cancelled: Boolean(engine.cancelSession?.(sessionId)), sessionId };
   }
 
-  controller.abort();
-  activeTurns.delete(sessionId);
-  sessions.updateStatus(sessionId, 'ready');
-  emit(sessionId, 'session.status', { status: 'ready', cancelled: true });
+  activeTurn.controller.abort();
+  try {
+    await activeTurn.turnPromise;
+  } catch {
+    // turnPromise owns status/error emission; cancellation callers only need the lock released.
+  }
   return { cancelled: true, sessionId };
 }
 
 function disposeSession(params) {
   const sessionId = requireString(params.sessionId, 'sessionId');
-  const controller = activeTurns.get(sessionId);
-  if (controller) {
-    controller.abort();
+  const activeTurn = activeTurns.get(sessionId);
+  if (activeTurn) {
+    activeTurn.controller.abort();
     activeTurns.delete(sessionId);
   }
 
@@ -1134,8 +1137,8 @@ function loadManifest() {
 }
 
 function shutdown() {
-  for (const controller of activeTurns.values()) {
-    controller.abort();
+  for (const activeTurn of activeTurns.values()) {
+    activeTurn.controller.abort();
   }
   engine.shutdown?.();
 
