@@ -64,11 +64,11 @@ import type {
 } from '../common/microideAgentService.js';
 
 const REASONING_EFFORTS: readonly { readonly id: MicroIDEEffortLevel; readonly label: string }[] = [
-	{ id: 'low', label: localize('microide.effortLow', "Low") },
-	{ id: 'medium', label: localize('microide.effortMedium', "Medium") },
-	{ id: 'high', label: localize('microide.effortHigh', "High") },
-	{ id: 'xhigh', label: localize('microide.effortExtraHigh', "Extra high") },
-	{ id: 'max', label: localize('microide.effortMax', "Max") },
+	{ id: 'low', label: localize('microide.effortLow', "低") },
+	{ id: 'medium', label: localize('microide.effortMedium', "中") },
+	{ id: 'high', label: localize('microide.effortHigh', "高") },
+	{ id: 'xhigh', label: localize('microide.effortExtraHigh', "很高") },
+	{ id: 'max', label: localize('microide.effortMax', "最高") },
 	{ id: 'ultracode', label: localize('microide.effortUltracode', "Ultracode") }
 ] as const;
 
@@ -78,9 +78,9 @@ const IMAGE_ATTACHMENT_TOKEN_ESTIMATE = 1024;
 type MicroIDECommandAction = 'attach-file' | 'mention-file' | 'clear-conversation' | 'switch-model' | 'account-usage' | 'toggle-thinking' | 'toggle-fast-mode' | 'insert-command';
 
 const AGENT_MODE_OPTIONS: readonly { readonly id: MicroIDEAgentMode; readonly label: string; readonly description: string; readonly icon: ThemeIcon }[] = [
-	{ id: 'agent', label: 'Agent', description: 'Single coding agent', icon: Codicon.agent },
-	{ id: 'multiAgent', label: 'Multi-Agent', description: 'Coordinate specialist agents', icon: Codicon.organization },
-	{ id: 'workflow', label: 'Workflow', description: 'Run a structured workflow', icon: Codicon.graph }
+	{ id: 'agent', label: localize('microide.agentModeAgent', "智能体"), description: localize('microide.agentModeAgentDescription', "单个编码智能体"), icon: Codicon.agent },
+	{ id: 'multiAgent', label: localize('microide.agentModeMultiAgent', "多智能体"), description: localize('microide.agentModeMultiAgentDescription', "协调多个专家智能体"), icon: Codicon.organization },
+	{ id: 'workflow', label: localize('microide.agentModeWorkflow', "工作流"), description: localize('microide.agentModeWorkflowDescription', "运行结构化工作流"), icon: Codicon.graph }
 ];
 
 
@@ -112,43 +112,43 @@ interface IMicroIDETaskCategory {
 }
 
 const WORKBUDDY_NAV_ITEMS: readonly IMicroIDEWorkbenchNavItem[] = [
-	{ id: 'task', label: localize('microide.workbuddy.newTask', "New Task"), description: localize('microide.workbuddy.newTaskDescription', "Start an agent run"), icon: Codicon.add },
-	{ id: 'plugins', label: localize('microide.workbuddy.skillsNav', "Skills"), description: localize('microide.workbuddy.pluginsDescription', "Skill store and presets"), icon: Codicon.extensions },
-	{ id: 'automation', label: localize('microide.workbuddy.automation', "Automation"), description: localize('microide.workbuddy.automationDescription', "Repeatable coding routines"), icon: Codicon.calendar }
+	{ id: 'task', label: localize('microide.workbuddy.newTask', "新任务"), description: localize('microide.workbuddy.newTaskDescription', "启动一次智能体任务"), icon: Codicon.add },
+	{ id: 'plugins', label: localize('microide.workbuddy.skillsNav', "技能"), description: localize('microide.workbuddy.pluginsDescription', "技能商店和预设"), icon: Codicon.extensions },
+	{ id: 'automation', label: localize('microide.workbuddy.automation', "自动化"), description: localize('microide.workbuddy.automationDescription', "可复用的编码流程"), icon: Codicon.calendar }
 ];
 
 const WORKBUDDY_WORKING_CATEGORIES: readonly IMicroIDETaskCategory[] = [
-	{ label: localize('microide.workbuddy.categoryDocumentation', "Documentation"), prompt: 'Draft a concise workplace document for this task. Include goal, context, decisions, and next actions.' },
-	{ label: localize('microide.workbuddy.categoryFinancialServices', "Financial Services"), prompt: 'Analyze this task as a financial-services workflow. Identify inputs, controls, risks, and the final deliverable.' },
-	{ label: localize('microide.workbuddy.categoryWorkplaceHelper', "Workplace Helper"), prompt: 'Help organize this workplace task. Clarify the request, create a short plan, and produce an actionable output.' },
-	{ label: localize('microide.workbuddy.categoryMore', "More"), prompt: 'Explore additional approaches for this task and suggest the best next action.' }
+	{ label: localize('microide.workbuddy.categoryDocumentation', "文档"), prompt: '为这个任务起草一份简洁的工作文档，包含目标、背景、决策和下一步行动。' },
+	{ label: localize('microide.workbuddy.categoryFinancialServices', "金融服务"), prompt: '按金融服务工作流分析这个任务，明确输入、控制点、风险和最终交付物。' },
+	{ label: localize('microide.workbuddy.categoryWorkplaceHelper', "办公助手"), prompt: '帮助整理这个办公任务，澄清需求，生成短计划，并产出可执行结果。' },
+	{ label: localize('microide.workbuddy.categoryMore', "更多"), prompt: '探索这个任务的其他处理方式，并建议最合适的下一步行动。' }
 ];
 
 const WORKBUDDY_CODING_CATEGORIES: readonly IMicroIDETaskCategory[] = [
-	{ label: localize('microide.workbuddy.categoryDailyDevelopment', "Daily Development"), prompt: 'Handle this daily development task. Inspect relevant files, make focused edits, and run the smallest useful verification.' },
-	{ label: localize('microide.workbuddy.categoryWebsiteDevelopment', "Website Development"), prompt: 'Work on this website development task. Prioritize layout, responsive behavior, polish, and verification.' },
-	{ label: localize('microide.workbuddy.categoryAgentApps', "Agent Apps"), prompt: 'Build or refine an agent-app workflow. Align the UI, tool states, and execution feedback.' },
-	{ label: localize('microide.workbuddy.categoryMoreCoding', "More"), prompt: 'Explore additional coding approaches for this workspace and choose the safest implementation path.' }
+	{ label: localize('microide.workbuddy.categoryDailyDevelopment', "日常开发"), prompt: '处理这个日常开发任务，检查相关文件，做聚焦修改，并运行最小但有效的验证。' },
+	{ label: localize('microide.workbuddy.categoryWebsiteDevelopment', "网站开发"), prompt: '处理这个网站开发任务，优先关注布局、响应式表现、细节打磨和验证。' },
+	{ label: localize('microide.workbuddy.categoryAgentApps', "智能体应用"), prompt: '构建或优化智能体应用工作流，对齐界面、工具状态和执行反馈。' },
+	{ label: localize('microide.workbuddy.categoryMoreCoding', "更多"), prompt: '探索这个工作区的其他编码方案，并选择最稳妥的实现路径。' }
 ];
 
 const WORKBUDDY_PROMPT_STARTERS: readonly IMicroIDEWorkbenchCard[] = [
-	{ title: localize('microide.workbuddy.promptReviewTitle', "Review current file"), description: localize('microide.workbuddy.promptReviewDescription', "Find risks, regressions, and missing tests."), meta: localize('microide.workbuddy.promptMetaCode', "Code"), icon: Codicon.shield, prompt: 'Review the current file for bugs, regressions, and missing tests. Prioritize concrete findings with file references.' },
-	{ title: localize('microide.workbuddy.promptPlanTitle', "Plan a feature"), description: localize('microide.workbuddy.promptPlanDescription', "Break down implementation steps before editing."), meta: localize('microide.workbuddy.promptMetaPlanning', "Planning"), icon: Codicon.checklist, prompt: 'Plan the implementation for this feature in the current workspace. Identify files to inspect first, risks, and a minimal verification path.' },
-	{ title: localize('microide.workbuddy.promptTestsTitle', "Create tests"), description: localize('microide.workbuddy.promptTestsDescription', "Add focused coverage for the active change."), meta: localize('microide.workbuddy.promptMetaQuality', "Quality"), icon: Codicon.beaker, prompt: 'Inspect the current change and add focused tests for the most important behavior. Keep the scope tight and run the relevant checks.' },
-	{ title: localize('microide.workbuddy.promptDocsTitle', "Generate docs"), description: localize('microide.workbuddy.promptDocsDescription', "Turn implementation details into concise docs."), meta: localize('microide.workbuddy.promptMetaDocs', "Docs"), icon: Codicon.book, prompt: 'Draft concise developer documentation for the selected code or current feature. Include usage, constraints, and verification notes.' }
+	{ title: localize('microide.workbuddy.promptReviewTitle', "审查当前文件"), description: localize('microide.workbuddy.promptReviewDescription', "查找风险、回归和缺失测试。"), meta: localize('microide.workbuddy.promptMetaCode', "代码"), icon: Codicon.shield, prompt: '审查当前文件中的 bug、回归和缺失测试，优先给出带文件引用的具体发现。' },
+	{ title: localize('microide.workbuddy.promptPlanTitle', "规划功能"), description: localize('microide.workbuddy.promptPlanDescription', "在编辑前拆解实现步骤。"), meta: localize('microide.workbuddy.promptMetaPlanning', "规划"), icon: Codicon.checklist, prompt: '为当前工作区中的这个功能规划实现方案，指出优先检查的文件、风险和最小验证路径。' },
+	{ title: localize('microide.workbuddy.promptTestsTitle', "创建测试"), description: localize('microide.workbuddy.promptTestsDescription', "为当前改动补充重点测试覆盖。"), meta: localize('microide.workbuddy.promptMetaQuality', "质量"), icon: Codicon.beaker, prompt: '检查当前改动，并为最重要的行为补充聚焦测试。保持范围收敛，并运行相关检查。' },
+	{ title: localize('microide.workbuddy.promptDocsTitle', "生成文档"), description: localize('microide.workbuddy.promptDocsDescription', "将实现细节整理成简洁文档。"), meta: localize('microide.workbuddy.promptMetaDocs', "文档"), icon: Codicon.book, prompt: '为选中的代码或当前功能起草简洁的开发文档，包含用法、约束和验证说明。' }
 ];
 
 const WORKBUDDY_FALLBACK_INSTALLABLE_PLUGINS: readonly IMicroClaudePluginInfo[] = [
-	{ id: 'frontend-design@claude-plugins-official', name: 'Frontend Design', description: localize('microide.workbuddy.pluginFrontendDesignDescription', "Create polished frontend interfaces and visual systems."), marketplace: 'claude-plugins-official', status: 'available', actionCommand: '/plugin install frontend-design@claude-plugins-official' },
-	{ id: 'skill-creator@claude-plugins-official', name: 'Skill Creator', description: localize('microide.workbuddy.pluginSkillCreatorDescription', "Create or refine reusable agent skills."), marketplace: 'claude-plugins-official', status: 'available', actionCommand: '/plugin install skill-creator@claude-plugins-official' },
-	{ id: 'playwright@claude-plugins-official', name: 'Playwright', description: localize('microide.workbuddy.pluginPlaywrightDescription', "Verify browser UI with screenshots and traces."), marketplace: 'claude-plugins-official', status: 'available', actionCommand: '/plugin install playwright@claude-plugins-official' },
-	{ id: 'openclaw-video-toolkit@openclaw-skills', name: 'OpenClaw Video Toolkit', description: localize('microide.workbuddy.pluginOpenClawVideoDescription', "Generate voiceovers, scenes, and Remotion videos from prompts."), marketplace: 'openclaw-skills', status: 'available', actionCommand: '/plugin install openclaw-video-toolkit@openclaw-skills' }
+	{ id: 'frontend-design@claude-plugins-official', name: 'Frontend Design', description: localize('microide.workbuddy.pluginFrontendDesignDescription', "创建精致的前端界面和视觉系统。"), marketplace: 'claude-plugins-official', status: 'available', actionCommand: '/plugin install frontend-design@claude-plugins-official' },
+	{ id: 'skill-creator@claude-plugins-official', name: 'Skill Creator', description: localize('microide.workbuddy.pluginSkillCreatorDescription', "创建或优化可复用的智能体技能。"), marketplace: 'claude-plugins-official', status: 'available', actionCommand: '/plugin install skill-creator@claude-plugins-official' },
+	{ id: 'playwright@claude-plugins-official', name: 'Playwright', description: localize('microide.workbuddy.pluginPlaywrightDescription', "用截图和 trace 验证浏览器界面。"), marketplace: 'claude-plugins-official', status: 'available', actionCommand: '/plugin install playwright@claude-plugins-official' },
+	{ id: 'openclaw-video-toolkit@openclaw-skills', name: 'OpenClaw Video Toolkit', description: localize('microide.workbuddy.pluginOpenClawVideoDescription', "根据提示词生成配音、场景和 Remotion 视频。"), marketplace: 'openclaw-skills', status: 'available', actionCommand: '/plugin install openclaw-video-toolkit@openclaw-skills' }
 ];
 const WORKBUDDY_AUTOMATION_CARDS: readonly IMicroIDEWorkbenchCard[] = [
-	{ title: localize('microide.workbuddy.automationWeekly', "Weekly Work Report"), description: localize('microide.workbuddy.automationWeeklyDescription', "Summarize commits, merged PRs, and pending risks."), meta: localize('microide.workbuddy.automationWeeklyMeta', "Weekly"), icon: Codicon.graphLine, prompt: 'Create a weekly engineering work report template for this repository. Include commits, PRs, shipped work, blockers, and next steps.' },
-	{ title: localize('microide.workbuddy.automationPrDigest', "PR Digest"), description: localize('microide.workbuddy.automationPrDigestDescription', "Collect changes, review notes, and verification status."), meta: localize('microide.workbuddy.automationDailyMeta', "Daily"), icon: Codicon.gitPullRequest, prompt: 'Build a PR digest workflow for this repository. Include changed areas, review risks, and verification commands.' },
-	{ title: localize('microide.workbuddy.automationRelease', "Release Checklist"), description: localize('microide.workbuddy.automationReleaseDescription', "Prepare validation tasks before shipping."), meta: localize('microide.workbuddy.automationTemplateMeta', "Template"), icon: Codicon.checklist, prompt: 'Create a release checklist for this project, including build, tests, migration checks, rollout, and rollback steps.' },
-	{ title: localize('microide.workbuddy.automationDependency', "Dependency Audit"), description: localize('microide.workbuddy.automationDependencyDescription', "Track outdated packages and risky updates."), meta: localize('microide.workbuddy.automationMonthlyMeta', "Monthly"), icon: Codicon.package, prompt: 'Design a dependency audit workflow for this project. Identify package managers, commands, risk levels, and reporting output.' }
+	{ title: localize('microide.workbuddy.automationWeekly', "每周工作报告"), description: localize('microide.workbuddy.automationWeeklyDescription', "汇总提交、已合并 PR 和待处理风险。"), meta: localize('microide.workbuddy.automationWeeklyMeta', "每周"), icon: Codicon.graphLine, prompt: '为这个仓库创建每周工程工作报告模板，包含提交、PR、已交付工作、阻塞项和下一步。' },
+	{ title: localize('microide.workbuddy.automationPrDigest', "PR 摘要"), description: localize('microide.workbuddy.automationPrDigestDescription', "汇总变更、评审记录和验证状态。"), meta: localize('microide.workbuddy.automationDailyMeta', "每日"), icon: Codicon.gitPullRequest, prompt: '为这个仓库构建 PR 摘要工作流，包含变更范围、评审风险和验证命令。' },
+	{ title: localize('microide.workbuddy.automationRelease', "发布检查清单"), description: localize('microide.workbuddy.automationReleaseDescription', "发布前准备验证任务。"), meta: localize('microide.workbuddy.automationTemplateMeta', "模板"), icon: Codicon.checklist, prompt: '为这个项目创建发布检查清单，包含构建、测试、迁移检查、发布和回滚步骤。' },
+	{ title: localize('microide.workbuddy.automationDependency', "依赖审计"), description: localize('microide.workbuddy.automationDependencyDescription', "跟踪过期依赖和高风险更新。"), meta: localize('microide.workbuddy.automationMonthlyMeta', "每月"), icon: Codicon.package, prompt: '为这个项目设计依赖审计工作流，明确包管理器、命令、风险等级和报告输出。' }
 ];
 
 
@@ -657,7 +657,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 				label.textContent = context.label;
 				const remove = dom.append(chip, dom.$('button.microide-file-context-remove')) as HTMLButtonElement;
 				remove.type = 'button';
-				remove.title = localize('microide.removeFileContext', "Remove file context");
+				remove.title = localize('microide.removeFileContext', "移除文件上下文");
 				appendIcon(remove, Codicon.close);
 				remove.addEventListener('click', () => this.removeFileContext(context.id));
 			}
@@ -882,7 +882,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		}
 		const state = this.microIDEAgentService.getState();
 		if (isTurnRunning(state)) {
-			this.notificationService.info(localize('microide.workbuddy.taskAlreadyRunning', "A task is already running. Wait for it to finish before starting another."));
+			this.notificationService.info(localize('microide.workbuddy.taskAlreadyRunning', "已有任务正在运行，请等待完成后再开始新任务。"));
 			return;
 		}
 
@@ -915,7 +915,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const name = dom.append(copy, dom.$('.microide-workbuddy-brand-name'));
 		name.textContent = localize('microide.workbuddy.MicroWorker', "MicroWorker");
 		const meta = dom.append(copy, dom.$('.microide-workbuddy-brand-meta'));
-		meta.textContent = localize('microide.workbuddy.agentWorkspace', "Coding Agent Workspace");
+		meta.textContent = localize('microide.workbuddy.agentWorkspace', "编码智能体工作区");
 
 		const nav = dom.append(container, dom.$('.microide-workbuddy-nav'));
 		for (const item of WORKBUDDY_NAV_ITEMS) {
@@ -940,7 +940,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 
 		const taskHeader = dom.append(container, dom.$('.microide-workbuddy-sidebar-section'));
 		const taskTitle = dom.append(taskHeader, dom.$('span'));
-		taskTitle.textContent = localize('microide.workbuddy.tasks', "Tasks");
+		taskTitle.textContent = localize('microide.workbuddy.tasks', "任务");
 		const taskCount = dom.append(taskHeader, dom.$('span.microide-workbuddy-sidebar-count'));
 		taskCount.textContent = String(state.sessions.filter(session => !session.closed).length);
 
@@ -950,7 +950,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			const empty = dom.append(tasks, dom.$('.microide-workbuddy-task-empty'));
 			appendIcon(empty, Codicon.add);
 			const emptyText = dom.append(empty, dom.$('span'));
-			emptyText.textContent = localize('microide.workbuddy.noTasks', "No tasks yet");
+			emptyText.textContent = localize('microide.workbuddy.noTasks', "暂无任务");
 		}
 		for (const session of openSessions) {
 			const row = dom.append(tasks, dom.$('.microide-workbuddy-task-row')) as HTMLElement;
@@ -962,13 +962,13 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			const open = dom.append(row, dom.$('button.microide-workbuddy-task-open')) as HTMLButtonElement;
 			open.type = 'button';
 			open.title = formatSessionTabTitle(session);
-			open.setAttribute('aria-label', localize('microide.workbuddy.openTaskTitle', "Open {0}", sessionDisplayTitle(session)));
+			open.setAttribute('aria-label', localize('microide.workbuddy.openTaskTitle', "打开 {0}", sessionDisplayTitle(session)));
 			const body = dom.append(open, dom.$('.microide-workbuddy-task-copy'));
 			const label = dom.append(body, dom.$('.microide-workbuddy-task-label'));
 			label.textContent = sessionDisplayTitle(session);
 			const detail = dom.append(body, dom.$('.microide-workbuddy-task-detail'));
 			detail.textContent = session.status === 'busy'
-				? localize('microide.workbuddy.taskRunning', "Running")
+				? localize('microide.workbuddy.taskRunning', "运行中")
 				: formatSessionTime(session.updatedAt);
 			open.addEventListener('click', () => {
 				this.activeWorkbenchSurface = 'task';
@@ -978,10 +978,10 @@ export class MicroIDEAgentPanelView extends ViewPane {
 
 			const stateSlot = dom.append(row, dom.$('.microide-workbuddy-task-state'));
 			if (session.status === 'busy') {
-				stateSlot.title = localize('microide.workbuddy.taskRunning', "Running");
+				stateSlot.title = localize('microide.workbuddy.taskRunning', "运行中");
 				appendIcon(stateSlot, Codicon.sync);
 			} else if (session.status === 'error') {
-				stateSlot.title = localize('microide.workbuddy.taskError', "Task has an error");
+				stateSlot.title = localize('microide.workbuddy.taskError', "任务出现错误");
 				appendIcon(stateSlot, Codicon.error);
 			} else {
 				stateSlot.textContent = formatSessionTime(session.updatedAt);
@@ -989,7 +989,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 
 			const remove = dom.append(row, dom.$('button.microide-workbuddy-task-delete')) as HTMLButtonElement;
 			remove.type = 'button';
-			remove.title = localize('microide.workbuddy.deleteTaskTitle', "Delete {0}", sessionDisplayTitle(session));
+			remove.title = localize('microide.workbuddy.deleteTaskTitle', "删除 {0}", sessionDisplayTitle(session));
 			remove.setAttribute('aria-label', remove.title);
 			remove.disabled = session.status === 'busy';
 			appendIcon(remove, Codicon.trash);
@@ -1007,7 +1007,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		appendIcon(account, state.auth.isAuthenticated ? Codicon.account : Codicon.lock);
 		const accountCopy = dom.append(account, dom.$('.microide-workbuddy-account-copy'));
 		const accountName = dom.append(accountCopy, dom.$('.microide-workbuddy-account-name'));
-		accountName.textContent = state.auth.displayName ?? localize('microide.workbuddy.localUser', "Local");
+		accountName.textContent = state.auth.displayName ?? localize('microide.workbuddy.localUser', "本地");
 		const accountMeta = dom.append(accountCopy, dom.$('.microide-workbuddy-account-meta'));
 		accountMeta.textContent = state.engine ? state.engine : statusLabel(state.status);
 	}
@@ -1034,8 +1034,8 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		if (this.activeWorkbenchSurface === 'automation') {
 			this.renderCollectionSurface(
 				container,
-				localize('microide.workbuddy.automationSurfaceTitle', "Automation"),
-				localize('microide.workbuddy.automationSurfaceDescription', "Turn repeatable engineering routines into prompts that can be scheduled or reused."),
+				localize('microide.workbuddy.automationSurfaceTitle', "自动化"),
+				localize('microide.workbuddy.automationSurfaceDescription', "将可复用的工程流程转为可定时或复用的提示词。"),
 				WORKBUDDY_AUTOMATION_CARDS
 			);
 			return;
@@ -1052,13 +1052,13 @@ export class MicroIDEAgentPanelView extends ViewPane {
 
 		const title = dom.append(studio, dom.$('.microide-workbuddy-studio-title'));
 		title.textContent = mode === 'working'
-			? localize('microide.workbuddy.workplaceSuperpower', "MicroWorker Your Workplace Superpower")
-			: localize('microide.workbuddy.developmentSuperpower', "MicroWorker Your Development Superpower");
+			? localize('microide.workbuddy.workplaceSuperpower', "MicroWorker 你的办公超能力")
+			: localize('microide.workbuddy.developmentSuperpower', "MicroWorker 你的开发超能力");
 
 		const modes = dom.append(studio, dom.$('.microide-workbuddy-mode-row.studio-modes'));
 		for (const option of [
-			{ id: 'working' as const, label: localize('microide.workbuddy.modeWorking', "Working") },
-			{ id: 'coding' as const, label: localize('microide.workbuddy.modeCoding', "Coding") }
+			{ id: 'working' as const, label: localize('microide.workbuddy.modeWorking', "工作") },
+			{ id: 'coding' as const, label: localize('microide.workbuddy.modeCoding', "编码") }
 		]) {
 			const button = dom.append(modes, dom.$('button.microide-workbuddy-mode-pill')) as HTMLButtonElement;
 			button.type = 'button';
@@ -1104,7 +1104,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		this.connectorsButton = undefined;
 		this.connectorsPopoverElement = undefined;
 		input.rows = 3;
-		input.placeholder = localize('microide.workbuddy.studioPlaceholder', "What can I help you with today? @ to reference files, / for slash commands");
+		input.placeholder = localize('microide.workbuddy.studioPlaceholder', "今天想让 MicroWorker 帮你做什么？@ 引用文件，/ 调用斜杠命令");
 		input.disabled = state.status === 'busy' || state.status === 'error';
 		input.addEventListener('keydown', event => {
 			if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
@@ -1126,7 +1126,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const studioAgentAnchor = dom.append(toolGroup, dom.$('.microide-popover-anchor'));
 		this.agentModeButton = dom.append(studioAgentAnchor, dom.$('button.microide-agent-mode-button')) as HTMLButtonElement;
 		this.agentModeButton.type = 'button';
-		this.agentModeButton.title = localize('microide.agentMode', "Agent mode");
+		this.agentModeButton.title = localize('microide.agentMode', "智能体模式");
 		this.renderAgentModeButton(state);
 		this.agentModePopoverElement = dom.append(studioAgentAnchor, dom.$('.microide-agent-mode-popover'));
 		this.agentModeButton.disabled = state.status === 'busy' || state.status === 'error';
@@ -1136,9 +1136,9 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		this.skillsButton = this.appendComposerChip(
 			studioSkillsAnchor,
 			Codicon.extensions,
-			localize('microide.workbuddy.skills', "Skills"),
+			localize('microide.workbuddy.skills', "技能"),
 			undefined,
-			localize('microide.workbuddy.skillsTitle', "Search and use installed skills"),
+			localize('microide.workbuddy.skillsTitle', "搜索并使用已安装技能"),
 			state.status === 'error',
 			() => this.toggleSkillsPopover(this.microIDEAgentService.getState())
 		);
@@ -1150,23 +1150,23 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const studioModelAnchor = dom.append(toolGroup, dom.$('.microide-popover-anchor'));
 		this.modelButton = dom.append(studioModelAnchor, dom.$('button.microide-model-button')) as HTMLButtonElement;
 		this.modelButton.type = 'button';
-		this.modelButton.title = localize('microide.modelPicker', "microClaude model");
+		this.modelButton.title = localize('microide.modelPicker', "microClaude 模型");
 		this.modelPopoverElement = dom.append(studioModelAnchor, dom.$('.microide-model-popover'));
 		this.renderModelButton(state);
 		this.modelButton.disabled = state.status === 'busy' || state.status === 'error';
 		this.modelButton.addEventListener('click', () => this.toggleModelPopover(this.microIDEAgentService.getState()));
 
 		const actions = dom.append(toolbar, dom.$('.microide-workbuddy-studio-actions'));
-		this.appendStudioIconButton(actions, Codicon.add, localize('microide.workbuddy.addContext', "Add context"), () => this.openStudioFileSearch(input), state.status === 'busy' || state.status === 'error');
+		this.appendStudioIconButton(actions, Codicon.add, localize('microide.workbuddy.addContext', "添加上下文"), () => this.openStudioFileSearch(input), state.status === 'busy' || state.status === 'error');
 		let improveButton: HTMLButtonElement | undefined;
-		improveButton = this.appendStudioIconButton(actions, Codicon.sparkle, localize('microide.workbuddy.improvePrompt', "Improve prompt"), () => void this.improvePromptInput(input, mode, improveButton), this.improvingPrompt || state.status === 'busy' || state.status === 'error');
+		improveButton = this.appendStudioIconButton(actions, Codicon.sparkle, localize('microide.workbuddy.improvePrompt', "优化提示词"), () => void this.improvePromptInput(input, mode, improveButton), this.improvingPrompt || state.status === 'busy' || state.status === 'error');
 		improveButton.classList.toggle('running', this.improvingPrompt);
-		this.appendStudioIconButton(actions, Codicon.send, localize('microide.workbuddy.startTask', "Start task"), () => void this.launchPromptFromWorkbench(input.value, { newTask: true }), state.status === 'busy' || state.status === 'error');
+		this.appendStudioIconButton(actions, Codicon.send, localize('microide.workbuddy.startTask', "开始任务"), () => void this.launchPromptFromWorkbench(input.value, { newTask: true }), state.status === 'busy' || state.status === 'error');
 
 		const workspaceRow = dom.append(composer, dom.$('.microide-workbuddy-studio-workspace'));
 		appendIcon(workspaceRow, Codicon.folder);
 		const workspaceText = dom.append(workspaceRow, dom.$('span'));
-		workspaceText.textContent = state.session?.workspace || this.workspaceContextService.getWorkspace().folders[0]?.uri.fsPath || localize('microide.workbuddy.selectWorkspace', "Select workspace");
+		workspaceText.textContent = state.session?.workspace || this.workspaceContextService.getWorkspace().folders[0]?.uri.fsPath || localize('microide.workbuddy.selectWorkspace', "选择工作区");
 	}
 
 	private renderStudioFileContexts(container: HTMLElement): void {
@@ -1193,7 +1193,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			} else {
 				const remove = dom.append(chip, dom.$('button.microide-workbuddy-studio-context-remove')) as HTMLButtonElement;
 				remove.type = 'button';
-				remove.title = localize('microide.removeFileContext', "Remove file context");
+				remove.title = localize('microide.removeFileContext', "移除文件上下文");
 				appendIcon(remove, Codicon.close);
 				remove.addEventListener('click', event => {
 					event.stopPropagation();
@@ -1220,7 +1220,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const searchInput = dom.append(box, dom.$('input.microide-workbuddy-file-search-input')) as HTMLInputElement;
 		searchInput.type = 'text';
 		searchInput.value = initialQuery;
-		searchInput.placeholder = localize('microide.workbuddy.fileSearchPlaceholder', "Search project files");
+		searchInput.placeholder = localize('microide.workbuddy.fileSearchPlaceholder', "搜索项目文件");
 		const results = dom.append(box, dom.$('.microide-workbuddy-file-search-results'));
 
 		const updateResults = () => void this.updateStudioFileSearchResults(results, searchInput.value, promptInput, searchInput);
@@ -1250,7 +1250,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		this.taskStudioFileSearchCts = cts;
 		dom.reset(results);
 		const loading = dom.append(results, dom.$('.microide-workbuddy-file-search-empty'));
-		loading.textContent = localize('microide.workbuddy.fileSearchLoading', "Searching...");
+		loading.textContent = localize('microide.workbuddy.fileSearchLoading', "搜索中...");
 
 		try {
 			const suggestions = await this.getMentionSuggestions(query.trim(), cts);
@@ -1260,7 +1260,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			dom.reset(results);
 			if (!suggestions.length) {
 				const empty = dom.append(results, dom.$('.microide-workbuddy-file-search-empty'));
-				empty.textContent = localize('microide.workbuddy.fileSearchEmpty', "No matching files");
+				empty.textContent = localize('microide.workbuddy.fileSearchEmpty', "未找到匹配文件");
 				return;
 			}
 			for (const suggestion of suggestions) {
@@ -1272,7 +1272,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			}
 			dom.reset(results);
 			const empty = dom.append(results, dom.$('.microide-workbuddy-file-search-empty'));
-			empty.textContent = localize('microide.workbuddy.fileSearchFailed', "File search is unavailable");
+			empty.textContent = localize('microide.workbuddy.fileSearchFailed', "文件搜索暂不可用");
 		}
 	}
 
@@ -1307,13 +1307,13 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const active = state.sessions.find(session => session.id === state.activeSessionId);
 		const copy = dom.append(strip, dom.$('.microide-workbuddy-progress-copy'));
 		const title = dom.append(copy, dom.$('.microide-workbuddy-progress-title'));
-		title.textContent = active ? sessionDisplayTitle(active) : localize('microide.workbuddy.currentTask', "Current task");
+		title.textContent = active ? sessionDisplayTitle(active) : localize('microide.workbuddy.currentTask', "当前任务");
 		const subtitle = dom.append(copy, dom.$('.microide-workbuddy-progress-subtitle'));
-		subtitle.textContent = state.turnStatus ? formatTurnStatusDetail(state.turnStatus) : state.status === 'ready' ? localize('microide.workbuddy.completedOrReady', "Ready for a follow-up") : statusLabel(state.status);
+		subtitle.textContent = state.turnStatus ? formatTurnStatusDetail(state.turnStatus) : state.status === 'ready' ? localize('microide.workbuddy.completedOrReady', "可以继续追问") : statusLabel(state.status);
 
 		const actions = dom.append(strip, dom.$('.microide-workbuddy-progress-actions'));
 		this.renderWorkBuddyTaskStatus(actions, state);
-		const sidePanelButton = appendIconButton(actions, this.taskSidePanelVisible ? Codicon.layoutSidebarRightOff : Codicon.layoutSidebarRight, localize('microide.workbuddy.toggleTaskSidePanel', "Open task panel"), 'compact secondary icon-only task-side-toggle');
+		const sidePanelButton = appendIconButton(actions, this.taskSidePanelVisible ? Codicon.layoutSidebarRightOff : Codicon.layoutSidebarRight, localize('microide.workbuddy.toggleTaskSidePanel', "打开任务侧栏"), 'compact secondary icon-only task-side-toggle');
 		sidePanelButton.setAttribute('aria-pressed', String(this.taskSidePanelVisible));
 		sidePanelButton.addEventListener('click', event => {
 			event.stopPropagation();
@@ -1337,14 +1337,14 @@ export class MicroIDEAgentPanelView extends ViewPane {
 
 		const header = dom.append(shell, dom.$('.microide-workbuddy-marketplace-header'));
 		const title = dom.append(header, dom.$('.microide-workbuddy-marketplace-title'));
-		title.textContent = localize('microide.workbuddy.skillsSurfaceTitle', "Skills");
+		title.textContent = localize('microide.workbuddy.skillsSurfaceTitle', "技能");
 		const subtitle = dom.append(header, dom.$('.microide-workbuddy-marketplace-subtitle'));
-		subtitle.textContent = localize('microide.workbuddy.skillsSurfaceDescription', "Browse installed skills and lightweight plugin-backed skill packs for MicroWorker.");
+		subtitle.textContent = localize('microide.workbuddy.skillsSurfaceDescription', "浏览已安装技能，以及由插件提供的轻量技能包。");
 		const search = dom.append(header, dom.$('.microide-workbuddy-marketplace-search'));
 		appendIcon(search, Codicon.search);
 		const input = dom.append(search, dom.$('input')) as HTMLInputElement;
 		input.type = 'search';
-		input.placeholder = localize('microide.workbuddy.searchSkills', "Search skills");
+		input.placeholder = localize('microide.workbuddy.searchSkills', "搜索技能");
 
 		const installedPlugins = state.plugins.installed;
 		const installedIds = new Set(installedPlugins.map(plugin => plugin.id.toLowerCase()));
@@ -1352,9 +1352,9 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			.filter((plugin, index, source) => source.findIndex(candidate => candidate.id.toLowerCase() === plugin.id.toLowerCase()) === index)
 			.filter(plugin => !installedIds.has(plugin.id.toLowerCase()));
 		const rows: HTMLElement[] = [];
-		this.renderMarketplaceSection(shell, localize('microide.workbuddy.installedSkillsAndPlugins', "Installed"), installedPlugins, localize('microide.workbuddy.noInstalledPlugins', "No installed skills found."), rows);
+		this.renderMarketplaceSection(shell, localize('microide.workbuddy.installedSkillsAndPlugins', "已安装"), installedPlugins, localize('microide.workbuddy.noInstalledPlugins', "未找到已安装技能。"), rows);
 		this.renderSkillShelf(shell, state.skills, rows);
-		this.renderMarketplaceSection(shell, localize('microide.workbuddy.availableSkillsAndPlugins', "Available"), availablePlugins, localize('microide.workbuddy.noAvailablePlugins', "No installable skills found."), rows);
+		this.renderMarketplaceSection(shell, localize('microide.workbuddy.availableSkillsAndPlugins', "可安装"), availablePlugins, localize('microide.workbuddy.noAvailablePlugins', "未找到可安装技能。"), rows);
 
 		input.addEventListener('input', () => {
 			const query = input.value.trim().toLowerCase();
@@ -1382,10 +1382,10 @@ export class MicroIDEAgentPanelView extends ViewPane {
 	private renderSkillShelf(container: HTMLElement, skills: readonly IMicroClaudeSkillInfo[], rows: HTMLElement[]): void {
 		const section = dom.append(container, dom.$('.microide-workbuddy-marketplace-section.skills'));
 		const heading = dom.append(section, dom.$('.microide-workbuddy-marketplace-section-title'));
-		heading.textContent = localize('microide.workbuddy.installedSkills', "Installed skills");
+		heading.textContent = localize('microide.workbuddy.installedSkills', "已安装技能");
 		if (!skills.length) {
 			const empty = dom.append(section, dom.$('.microide-workbuddy-marketplace-empty'));
-			empty.textContent = localize('microide.workbuddy.noInstalledSkills', "No installed skills found.");
+			empty.textContent = localize('microide.workbuddy.noInstalledSkills', "未找到已安装技能。");
 			return;
 		}
 		const list = dom.append(section, dom.$('.microide-workbuddy-marketplace-list'));
@@ -1414,7 +1414,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const description = dom.append(copy, dom.$('.microide-workbuddy-marketplace-item-description'));
 		description.textContent = plugin.description;
 		const meta = dom.append(copy, dom.$('.microide-workbuddy-marketplace-item-meta'));
-		meta.textContent = plugin.marketplace || plugin.source || (plugin.status === 'installed' ? localize('microide.workbuddy.installed', "Installed") : localize('microide.workbuddy.available', "Available"));
+		meta.textContent = plugin.marketplace || plugin.source || (plugin.status === 'installed' ? localize('microide.workbuddy.installed', "已安装") : localize('microide.workbuddy.available', "可安装"));
 		const actions = dom.append(row, dom.$('.microide-workbuddy-marketplace-actions'));
 		const installed = plugin.status === 'installed';
 		const installing = this.installingPluginIds.has(plugin.id);
@@ -1422,12 +1422,12 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const action = dom.append(actions, dom.$('button.microide-workbuddy-marketplace-action')) as HTMLButtonElement;
 		action.type = 'button';
 		action.textContent = installing
-			? localize('microide.workbuddy.installing', "Installing...")
-			: installed ? localize('microide.workbuddy.tryInChat', "Try in chat") : localize('microide.workbuddy.install', "Install");
+			? localize('microide.workbuddy.installing', "安装中...")
+			: installed ? localize('microide.workbuddy.tryInChat', "在对话中使用") : localize('microide.workbuddy.install', "安装");
 		action.disabled = installing || uninstalling;
 		action.title = installed
-			? localize('microide.workbuddy.tryInstalledPlugin', "Start a chat with this installed plugin")
-			: localize('microide.workbuddy.installPluginNow', "Install this plugin through the backend plugin catalog");
+			? localize('microide.workbuddy.tryInstalledPlugin', "使用这个已安装技能开始对话")
+			: localize('microide.workbuddy.installPluginNow', "通过后端技能目录安装这个技能");
 		action.addEventListener('click', event => {
 			event.preventDefault();
 			event.stopPropagation();
@@ -1441,8 +1441,8 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			const uninstall = dom.append(actions, dom.$('button.microide-workbuddy-marketplace-action.subtle')) as HTMLButtonElement;
 			uninstall.type = 'button';
 			uninstall.disabled = installing || uninstalling;
-			uninstall.textContent = uninstalling ? localize('microide.workbuddy.uninstalling', "Removing...") : localize('microide.workbuddy.uninstall', "Uninstall");
-			uninstall.title = localize('microide.workbuddy.uninstallPlugin', "Uninstall this plugin");
+			uninstall.textContent = uninstalling ? localize('microide.workbuddy.uninstalling', "移除中...") : localize('microide.workbuddy.uninstall', "卸载");
+			uninstall.title = localize('microide.workbuddy.uninstallPlugin', "卸载这个技能");
 			uninstall.addEventListener('click', event => {
 				event.preventDefault();
 				event.stopPropagation();
@@ -1459,7 +1459,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		this.renderState();
 		try {
 			await this.microIDEAgentService.installPlugin(plugin.id);
-			this.notificationService.info(localize('microide.workbuddy.pluginInstalled', "Installed {0}.", plugin.name));
+			this.notificationService.info(localize('microide.workbuddy.pluginInstalled', "已安装 {0}。", plugin.name));
 		} catch (error) {
 			this.notificationService.error(toErrorMessage(error));
 		} finally {
@@ -1476,7 +1476,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		this.renderState();
 		try {
 			await this.microIDEAgentService.uninstallPlugin(plugin.id);
-			this.notificationService.info(localize('microide.workbuddy.pluginUninstalled', "Uninstalled {0}.", plugin.name));
+			this.notificationService.info(localize('microide.workbuddy.pluginUninstalled', "已卸载 {0}。", plugin.name));
 		} catch (error) {
 			this.notificationService.error(toErrorMessage(error));
 		} finally {
@@ -1585,24 +1585,24 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		if (!visible) {
 			return;
 		}
-		this.appendPopoverHeader(popover, localize('microide.workbuddy.skillsPopover', "Skills"), localize('microide.workbuddy.skillsPopoverDescription', "Installed skills returned by the backend skills catalog."));
+		this.appendPopoverHeader(popover, localize('microide.workbuddy.skillsPopover', "技能"), localize('microide.workbuddy.skillsPopoverDescription', "后端技能目录返回的已安装技能。"));
 		if (!state.skills.length) {
 			const empty = dom.append(popover, dom.$('.microide-workbuddy-popover-empty'));
-			empty.textContent = localize('microide.workbuddy.noInstalledSkills', "No installed skills found.");
+			empty.textContent = localize('microide.workbuddy.noInstalledSkills', "未找到已安装技能。");
 			return;
 		}
 		const search = dom.append(popover, dom.$('.microide-workbuddy-popover-search'));
 		appendIcon(search, Codicon.search);
 		const input = dom.append(search, dom.$('input')) as HTMLInputElement;
 		input.type = 'search';
-		input.placeholder = localize('microide.workbuddy.searchInstalledSkills', "Search installed skills");
+		input.placeholder = localize('microide.workbuddy.searchInstalledSkills', "搜索已安装技能");
 		const section = dom.append(popover, dom.$('.microide-workbuddy-popover-section'));
-		section.textContent = localize('microide.workbuddy.installedSkills', "Installed skills");
+		section.textContent = localize('microide.workbuddy.installedSkills', "已安装技能");
 		const list = dom.append(popover, dom.$('.microide-workbuddy-popover-list'));
 		const rows: HTMLElement[] = [];
 		for (const skill of state.skills) {
 			const commandText = '/' + skill.name.replace(/^\//, '');
-			const row = this.appendPopoverRow(list, Codicon.sparkle, commandText, skill.description || skill.name, skill.source || localize('microide.workbuddy.installed', "Installed"));
+			const row = this.appendPopoverRow(list, Codicon.sparkle, commandText, skill.description || skill.name, skill.source || localize('microide.workbuddy.installed', "已安装"));
 			row.setAttribute('data-search', [commandText, skill.description, skill.source, skill.origin].join(' ').toLowerCase());
 			row.addEventListener('click', () => {
 				this.skillsPopoverElement?.classList.remove('visible');
@@ -1611,7 +1611,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			rows.push(row);
 		}
 		const empty = dom.append(popover, dom.$('.microide-workbuddy-popover-empty.hidden'));
-		empty.textContent = localize('microide.workbuddy.noSkillMatches', "No matching skills");
+		empty.textContent = localize('microide.workbuddy.noSkillMatches', "未找到匹配技能");
 		input.addEventListener('input', () => {
 			const query = input.value.trim().toLowerCase();
 			let visibleRows = 0;
@@ -1649,16 +1649,16 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		if (!visible) {
 			return;
 		}
-		this.appendPopoverHeader(popover, localize('microide.workbuddy.workspace', "Workspace"), localize('microide.workbuddy.workspaceDescription', "Choose what the next task should treat as local context."));
+		this.appendPopoverHeader(popover, localize('microide.workbuddy.workspace', "工作区"), localize('microide.workbuddy.workspaceDescription', "选择下一个任务要使用的本地上下文。"));
 		const folders = this.workspaceContextService.getWorkspace().folders;
 		if (!folders.length) {
 			const empty = dom.append(popover, dom.$('.microide-workbuddy-popover-empty'));
-			empty.textContent = localize('microide.workbuddy.noWorkspace', "No workspace folder is open.");
+			empty.textContent = localize('microide.workbuddy.noWorkspace', "当前没有打开工作区文件夹。");
 			return;
 		}
 		for (const folder of folders) {
-			const row = this.appendPopoverRow(popover, Codicon.folder, folder.name, folder.uri.fsPath || folder.uri.path, state.session?.workspace === folder.uri.fsPath ? localize('microide.workbuddy.selected', "Selected") : localize('microide.workbuddy.available', "Available"));
-			row.addEventListener('click', () => this.seedPrompt('Use workspace ' + folder.name + ' as the primary context for this task.'));
+			const row = this.appendPopoverRow(popover, Codicon.folder, folder.name, folder.uri.fsPath || folder.uri.path, state.session?.workspace === folder.uri.fsPath ? localize('microide.workbuddy.selected', "已选择") : localize('microide.workbuddy.available', "可安装"));
+			row.addEventListener('click', () => this.seedPrompt('将工作区 ' + folder.name + ' 作为这个任务的主要上下文。'));
 		}
 	}
 
@@ -1754,13 +1754,13 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		}
 
 		const toolbar = dom.append(container, dom.$('.microide-task-side-panel-toolbar'));
-		const menuButton = appendIconButton(toolbar, this.taskSidePanelMode === 'browser' ? Codicon.browser : Codicon.diffMultiple, this.taskSidePanelMode === 'browser' ? localize('microide.workbuddy.browser', "Browser") : localize('microide.workbuddy.changes', "Changes"), 'compact secondary task-side-menu-button');
+		const menuButton = appendIconButton(toolbar, this.taskSidePanelMode === 'browser' ? Codicon.browser : Codicon.diffMultiple, this.taskSidePanelMode === 'browser' ? localize('microide.workbuddy.browser', "浏览器") : localize('microide.workbuddy.changes', "变更"), 'compact secondary task-side-menu-button');
 		appendIcon(menuButton, Codicon.chevronDown);
 		menuButton.setAttribute('aria-haspopup', 'menu');
 		menuButton.setAttribute('aria-expanded', 'false');
 		const menu = dom.append(toolbar, dom.$('.microide-task-side-panel-menu'));
-		this.appendTaskSidePanelMenuItem(menu, 'browser', Codicon.browser, localize('microide.workbuddy.browser', "Browser"));
-		this.appendTaskSidePanelMenuItem(menu, 'changes', Codicon.diffMultiple, localize('microide.workbuddy.changes', "Changes"));
+		this.appendTaskSidePanelMenuItem(menu, 'browser', Codicon.browser, localize('microide.workbuddy.browser', "浏览器"));
+		this.appendTaskSidePanelMenuItem(menu, 'changes', Codicon.diffMultiple, localize('microide.workbuddy.changes', "变更"));
 		menuButton.addEventListener('click', event => {
 			event.stopPropagation();
 			const nextVisible = !menu.classList.contains('visible');
@@ -1770,7 +1770,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		});
 
 		const toolbarActions = dom.append(toolbar, dom.$('.microide-task-side-panel-actions'));
-		const closeButton = appendIconButton(toolbarActions, Codicon.layoutSidebarRightOff, localize('microide.workbuddy.closeTaskSidePanel', "Close task panel"), 'compact secondary icon-only');
+		const closeButton = appendIconButton(toolbarActions, Codicon.layoutSidebarRightOff, localize('microide.workbuddy.closeTaskSidePanel', "关闭任务侧栏"), 'compact secondary icon-only');
 		closeButton.addEventListener('click', () => {
 			this.taskSidePanelVisible = false;
 			this.hideTaskBrowserView();
@@ -1806,14 +1806,14 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const header = dom.append(container, dom.$('.microide-task-browser-header'));
 		const title = dom.append(header, dom.$('.microide-task-side-panel-title'));
 		appendIcon(title, Codicon.browser);
-		dom.append(title, dom.$('span')).textContent = localize('microide.workbuddy.browser', "Browser");
+		dom.append(title, dom.$('span')).textContent = localize('microide.workbuddy.browser', "浏览器");
 		const form = dom.append(container, dom.$('form.microide-task-browser-address')) as HTMLFormElement;
 		const input = dom.append(form, dom.$('input')) as HTMLInputElement;
 		input.type = 'text';
 		input.spellcheck = false;
-		input.placeholder = localize('microide.workbuddy.browserPlaceholder', "Enter URL or search terms");
+		input.placeholder = localize('microide.workbuddy.browserPlaceholder', "输入网址或搜索关键词");
 		input.value = this.taskBrowserUrl === 'about:blank' ? '' : this.taskBrowserUrl;
-		const go = appendIconButton(form, Codicon.arrowRight, localize('microide.workbuddy.openBrowserUrl', "Open"), 'compact primary icon-only');
+		const go = appendIconButton(form, Codicon.arrowRight, localize('microide.workbuddy.openBrowserUrl', "打开"), 'compact primary icon-only');
 		const open = (): void => {
 			const nextUrl = normalizeTaskBrowserUrl(input.value);
 			this.taskBrowserUrl = nextUrl;
@@ -1844,8 +1844,8 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		if (this.taskBrowserUrl === 'about:blank') {
 			const empty = dom.append(frameWrap, dom.$('.microide-task-side-empty.microide-task-browser-launcher'));
 			appendIcon(empty, Codicon.browser);
-			dom.append(empty, dom.$('strong')).textContent = localize('microide.workbuddy.browserEmptyTitle', "Open a browser view");
-			dom.append(empty, dom.$('span')).textContent = localize('microide.workbuddy.browserEmptyDescription', "Open a page here. Shared BrowserView pages can be controlled by the agent browser skill.");
+			dom.append(empty, dom.$('strong')).textContent = localize('microide.workbuddy.browserEmptyTitle', "打开浏览器视图");
+			dom.append(empty, dom.$('span')).textContent = localize('microide.workbuddy.browserEmptyDescription', "在这里打开网页。共享的 BrowserView 页面可由 agent browser 技能控制。");
 			this.hideTaskBrowserView();
 			return;
 		}
@@ -1853,8 +1853,8 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		if (this.taskBrowserStatus === 'error') {
 			const empty = dom.append(frameWrap, dom.$('.microide-task-side-empty.microide-task-browser-launcher'));
 			appendIcon(empty, Codicon.warning);
-			dom.append(empty, dom.$('strong')).textContent = localize('microide.workbuddy.browserErrorTitle', "Browser failed to open");
-			dom.append(empty, dom.$('span')).textContent = localize('microide.workbuddy.browserErrorDescription', "Check the URL and try again.");
+			dom.append(empty, dom.$('strong')).textContent = localize('microide.workbuddy.browserErrorTitle', "浏览器打开失败");
+			dom.append(empty, dom.$('span')).textContent = localize('microide.workbuddy.browserErrorDescription', "请检查网址后重试。");
 			return;
 		}
 
@@ -1881,7 +1881,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		this.taskBrowserOpeningUrl = url;
 		this.taskBrowserStatus = 'opening';
 		try {
-			const input = this.taskBrowserInput ?? this.browserViewWorkbenchService.getOrCreateLazy(MICROIDE_TASK_BROWSER_VIEW_ID, { url, title: localize('microide.workbuddy.browserTitle', "MicroWorker Browser") });
+			const input = this.taskBrowserInput ?? this.browserViewWorkbenchService.getOrCreateLazy(MICROIDE_TASK_BROWSER_VIEW_ID, { url, title: localize('microide.workbuddy.browserTitle', "MicroWorker 浏览器") });
 			this.taskBrowserInput = input;
 			const model = input.model ?? await input.resolve();
 			this.attachTaskBrowserModel(model);
@@ -2006,16 +2006,16 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const header = dom.append(container, dom.$('.microide-task-changes-header'));
 		const title = dom.append(header, dom.$('.microide-task-side-panel-title'));
 		appendIcon(title, Codicon.diffMultiple);
-		dom.append(title, dom.$('span')).textContent = localize('microide.workbuddy.changes', "Changes");
+		dom.append(title, dom.$('span')).textContent = localize('microide.workbuddy.changes', "变更");
 		const changes = this.collectTaskChanges(state);
 		const count = dom.append(header, dom.$('.microide-task-changes-count'));
-		count.textContent = changes.length === 1 ? localize('microide.workbuddy.oneChangedFile', "1 file") : localize('microide.workbuddy.changedFiles', "{0} files", changes.length);
+		count.textContent = changes.length === 1 ? localize('microide.workbuddy.oneChangedFile', "1 个文件") : localize('microide.workbuddy.changedFiles', "{0} 个文件", changes.length);
 
 		if (!changes.length) {
 			const empty = dom.append(container, dom.$('.microide-task-side-empty'));
 			appendIcon(empty, Codicon.diffMultiple);
-			dom.append(empty, dom.$('strong')).textContent = localize('microide.workbuddy.noChangesTitle', "No file changes yet");
-			dom.append(empty, dom.$('span')).textContent = localize('microide.workbuddy.noChangesDescription', "Files edited in this session will appear here as collapsible diff cards.");
+			dom.append(empty, dom.$('strong')).textContent = localize('microide.workbuddy.noChangesTitle', "暂无文件变更");
+			dom.append(empty, dom.$('span')).textContent = localize('microide.workbuddy.noChangesDescription', "本会话编辑过的文件会以可展开的 diff 卡片显示在这里。");
 			return;
 		}
 
@@ -2326,16 +2326,16 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			|| team.tasks.length > 0
 			|| team.messages.length > 0;
 		title.textContent = team.teamName ?? (hasTeamActivity
-			? localize('microide.teamWaitingTitle', "Agent team")
-			: localize('microide.teamDeferredTitle', "Multi-Agent mode"));
+			? localize('microide.teamWaitingTitle', "智能体团队")
+			: localize('microide.teamDeferredTitle', "多智能体模式"));
 		const meta = dom.append(head, dom.$('.microide-team-meta'));
 		meta.textContent = hasTeamActivity
 			? [
 				teamStatusLabel(team.status),
-				localize('microide.teamMembersCount', "{0} agents", team.members.length),
-				localize('microide.teamTasksCount', "{0} tasks", team.tasks.length)
+				localize('microide.teamMembersCount', "{0} 个智能体", team.members.length),
+				localize('microide.teamTasksCount', "{0} 个任务", team.tasks.length)
 			].join(' / ')
-			: localize('microide.teamDeferredMeta', "Team starts when the next task needs specialists");
+			: localize('microide.teamDeferredMeta', "下个任务需要专家时会启动团队");
 
 		if (team.teamFilePath) {
 			const file = dom.append(head, dom.$('.microide-team-file'));
@@ -2347,7 +2347,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			const deferred = dom.append(container, dom.$('.microide-team-deferred'));
 			appendIcon(deferred, Codicon.sparkle);
 			const text = dom.append(deferred, dom.$('span'));
-			text.textContent = localize('microide.teamDeferredBody', "No team is running yet. microClaude will create teammates dynamically after you send a multi-agent task.");
+			text.textContent = localize('microide.teamDeferredBody', "当前还没有团队运行。发送多智能体任务后，microClaude 会动态创建协作成员。");
 			return;
 		}
 
@@ -2372,7 +2372,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		}
 		if (!team.members.length) {
 			const waiting = dom.append(members, dom.$('.microide-team-waiting'));
-			waiting.textContent = localize('microide.teamWaitingMembers', "Waiting for teammates");
+			waiting.textContent = localize('microide.teamWaitingMembers', "等待协作成员");
 		}
 
 		const tasks = dom.append(body, dom.$('.microide-team-tasks'));
@@ -2381,7 +2381,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		}
 		if (!team.tasks.length) {
 			const emptyTask = dom.append(tasks, dom.$('.microide-team-empty'));
-			emptyTask.textContent = localize('microide.teamNoTasks', "No team tasks yet");
+			emptyTask.textContent = localize('microide.teamNoTasks', "暂无团队任务");
 		}
 
 		const messages = dom.append(body, dom.$('.microide-team-messages'));
@@ -2397,7 +2397,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			}
 		} else {
 			const emptyMessage = dom.append(messages, dom.$('.microide-team-empty'));
-			emptyMessage.textContent = localize('microide.teamNoMessages', "No teammate messages yet");
+			emptyMessage.textContent = localize('microide.teamNoMessages', "暂无协作消息");
 		}
 	}
 
@@ -2407,9 +2407,9 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const activeMembers = team.members.filter(member => member.status === 'running').length;
 		const inactiveMembers = team.members.filter(member => member.status === 'idle' || member.status === 'stopped').length;
 		const blocks: Array<{ label: string; value: string; tone?: 'good' | 'warning' | 'neutral' }> = [
-			{ label: localize('microide.teamSummaryActive', "Active"), value: String(activeMembers), tone: activeMembers > 0 ? 'good' : 'neutral' },
-			{ label: localize('microide.teamSummaryTasks', "Tasks"), value: String(team.tasks.length), tone: team.tasks.some(task => /running|in[_-]?progress|blocked|failed|error/i.test(task.status)) ? 'warning' : 'neutral' },
-			{ label: localize('microide.teamSummaryMessages', "Msgs"), value: String(team.messages.length), tone: team.messages.length > 0 ? 'good' : 'neutral' }
+			{ label: localize('microide.teamSummaryActive', "活跃"), value: String(activeMembers), tone: activeMembers > 0 ? 'good' : 'neutral' },
+			{ label: localize('microide.teamSummaryTasks', "任务"), value: String(team.tasks.length), tone: team.tasks.some(task => /running|in[_-]?progress|blocked|failed|error/i.test(task.status)) ? 'warning' : 'neutral' },
+			{ label: localize('microide.teamSummaryMessages', "消息"), value: String(team.messages.length), tone: team.messages.length > 0 ? 'good' : 'neutral' }
 		];
 		for (const block of blocks) {
 			const pill = dom.append(container, dom.$(`.microide-team-summary-pill.tone-${block.tone ?? 'neutral'}`));
@@ -2420,7 +2420,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		}
 		if (inactiveMembers > 0) {
 			const idle = dom.append(container, dom.$('.microide-team-summary-idle'));
-			idle.textContent = localize('microide.teamSummaryIdle', "{0} idle", inactiveMembers);
+			idle.textContent = localize('microide.teamSummaryIdle', "{0} 个空闲", inactiveMembers);
 		}
 	}
 
@@ -2508,13 +2508,13 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			option.addEventListener('click', run);
 		};
 
-		addOption(1, localize('microide.permissionYes', "Yes"), true, () => void this.resolvePromptApprove(request));
-		addOption(2, localize('microide.permissionYesAllEditsSession', "Yes, allow all edits this session"), false, () => void this.resolvePromptApproveProject(request));
-		addOption(3, localize('microide.permissionNo', "No"), false, () => void this.resolvePromptDeny(request));
+		addOption(1, localize('microide.permissionYes', "是"), true, () => void this.resolvePromptApprove(request));
+		addOption(2, localize('microide.permissionYesAllEditsSession', "是，并允许本会话所有编辑"), false, () => void this.resolvePromptApproveProject(request));
+		addOption(3, localize('microide.permissionNo', "否"), false, () => void this.resolvePromptDeny(request));
 
 		const instead = dom.append(card, dom.$('input.microide-permission-prompt-instead')) as HTMLInputElement;
 		instead.type = 'text';
-		instead.placeholder = localize('microide.permissionInsteadClaude', "Tell Claude what to do instead");
+		instead.placeholder = localize('microide.permissionInsteadClaude', "告诉 MicroWorker 改怎么做");
 		instead.addEventListener('keydown', e => {
 			if (e.key === 'Enter' && instead.value.trim()) {
 				e.preventDefault();
@@ -2526,7 +2526,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		});
 
 		const cancel = dom.append(card, dom.$('.microide-permission-prompt-cancel'));
-		cancel.textContent = localize('microide.permissionEscCancel', "Esc to cancel");
+		cancel.textContent = localize('microide.permissionEscCancel', "按 Esc 取消");
 
 		// Number-key shortcuts (1/2/3) when focus is not in the "instead" input.
 		host.onkeydown = e => {
@@ -2656,7 +2656,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 					previewTitle.textContent = row?.label ?? localize('microide.askUserQuestionPreviewTitle', "Preview");
 					previewBody.classList.toggle('empty', !previewContent);
 					if (!previewContent) {
-						previewBody.textContent = localize('microide.askUserQuestionNoPreview', "No preview available");
+						previewBody.textContent = localize('microide.askUserQuestionNoPreview', "暂无预览");
 						return;
 					}
 					const rendered = previewDisposables.add(this.markdownRendererService.render(new MarkdownString(previewContent, { isTrusted: false, supportThemeIcons: true, supportHtml: true }), {}));
@@ -2738,7 +2738,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 
 		const footer = dom.append(card, dom.$('.microide-ask-user-footer'));
 		const cancel = dom.append(footer, dom.$('.microide-ask-user-cancel'));
-		cancel.textContent = localize('microide.permissionEscCancel', "Esc to cancel");
+		cancel.textContent = localize('microide.permissionEscCancel', "按 Esc 取消");
 		submit = dom.append(footer, dom.$('button.microide-ask-user-submit')) as HTMLButtonElement;
 		submit.type = 'button';
 		appendIcon(submit, Codicon.check);
@@ -2837,16 +2837,16 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const composerHead = dom.append(composerShell, dom.$('.microide-workbuddy-composer-head'));
 		const composerTitle = dom.append(composerHead, dom.$('.microide-workbuddy-composer-title'));
 		composerTitle.textContent = isTaskFollowUpComposer
-			? localize('microide.workbuddy.followUpComposerTitle', "Follow up")
-			: localize('microide.workbuddy.composerTitle', "New task");
+			? localize('microide.workbuddy.followUpComposerTitle', "继续对话")
+			: localize('microide.workbuddy.composerTitle', "新任务");
 		const composerMeta = dom.append(composerHead, dom.$('.microide-workbuddy-composer-meta'));
 		composerMeta.textContent = state.turnStatus ? turnPhaseLabel(state.turnStatus.phase) : permissionModeShortLabel(state.permissionMode);
 		this.attachmentsElement = dom.append(composerShell, dom.$('.microide-composer-attachments'));
 		this.inputElement = dom.append(composerShell, dom.$('textarea.microide-agent-input')) as HTMLTextAreaElement;
 		this.inputElement.rows = 3;
 		this.inputElement.placeholder = isBusy
-			? localize('microide.promptPlaceholderBusy', "Queue another message...")
-			: localize('microide.promptPlaceholder', "Ask MicroWorker to plan, edit, test, or document... @ files, / skills");
+			? localize('microide.promptPlaceholderBusy', "继续输入下一条消息...")
+			: localize('microide.promptPlaceholder', "让 MicroWorker 规划、编辑、测试或写文档... @ 引用文件，/ 调用技能");
 		this.inputElement.value = previousValue;
 		this.commandPaletteElement = dom.append(composerShell, dom.$('.microide-command-palette'));
 		this.mentionPopoverElement = dom.append(composerShell, dom.$('.microide-mention-palette'));
@@ -2908,7 +2908,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const agentAnchor = dom.append(controls, dom.$('.microide-popover-anchor'));
 		this.agentModeButton = dom.append(agentAnchor, dom.$('button.microide-agent-mode-button')) as HTMLButtonElement;
 		this.agentModeButton.type = 'button';
-		this.agentModeButton.title = localize('microide.agentMode', "Agent mode");
+		this.agentModeButton.title = localize('microide.agentMode', "智能体模式");
 		this.renderAgentModeButton(state);
 		this.agentModePopoverElement = dom.append(agentAnchor, dom.$('.microide-agent-mode-popover'));
 		this.agentModeButton.disabled = state.status === 'busy' || state.status === 'error';
@@ -2919,9 +2919,9 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		this.skillsButton = this.appendComposerChip(
 			skillsAnchor,
 			Codicon.extensions,
-			localize('microide.workbuddy.skills', "Skills"),
+			localize('microide.workbuddy.skills', "技能"),
 			undefined,
-			localize('microide.workbuddy.skillsTitle', "Search and use installed skills"),
+			localize('microide.workbuddy.skillsTitle', "搜索并使用已安装技能"),
 			state.status === 'error',
 			() => this.toggleSkillsPopover(this.microIDEAgentService.getState())
 		);
@@ -2931,7 +2931,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const permissionAnchor = dom.append(controls, dom.$('.microide-popover-anchor'));
 		this.permissionModeButton = dom.append(permissionAnchor, dom.$('button.microide-permission-mode-button')) as HTMLButtonElement;
 		this.permissionModeButton.type = 'button';
-		this.permissionModeButton.title = localize('microide.permissionModeButton', "Permission mode");
+		this.permissionModeButton.title = localize('microide.permissionModeButton', "权限模式");
 		appendIcon(this.permissionModeButton, permissionModeIcon(state.permissionMode));
 		const modeLabel = dom.append(this.permissionModeButton, dom.$('span.microide-permission-mode-label'));
 		modeLabel.textContent = permissionModeShortLabel(state.permissionMode);
@@ -2945,7 +2945,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const modelAnchor = dom.append(controls, dom.$('.microide-popover-anchor'));
 		this.modelButton = dom.append(modelAnchor, dom.$('button.microide-model-button')) as HTMLButtonElement;
 		this.modelButton.type = 'button';
-		this.modelButton.title = localize('microide.modelPicker', "microClaude model");
+		this.modelButton.title = localize('microide.modelPicker', "microClaude 模型");
 		this.modelPopoverElement = dom.append(modelAnchor, dom.$('.microide-model-popover'));
 		this.renderModelButton(state);
 		this.modelButton.disabled = state.status === 'busy' || state.status === 'error';
@@ -2956,9 +2956,9 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		this.workspaceButton = this.appendComposerChip(
 			workspaceAnchor,
 			Codicon.folder,
-			localize('microide.workbuddy.workspaceButton', "Workspace"),
-			workspaceFolders[0]?.name ?? localize('microide.workbuddy.noWorkspaceShort', "None"),
-			localize('microide.workbuddy.workspaceTitle', "Select task workspace context"),
+			localize('microide.workbuddy.workspaceButton', "工作区"),
+			workspaceFolders[0]?.name ?? localize('microide.workbuddy.noWorkspaceShort', "无"),
+			localize('microide.workbuddy.workspaceTitle', "选择任务工作区上下文"),
 			state.status === 'error',
 			() => this.toggleWorkspacePopover(this.microIDEAgentService.getState())
 		);
@@ -2975,25 +2975,25 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		this.contextMeterElement.setAttribute('aria-valuemax', '100');
 		dom.append(this.contextMeterElement, dom.$('.microide-context-meter-core'));
 		this.renderContextMeter(state);
-		const addContextButton = appendIconButton(actions, Codicon.add, localize('microide.workbuddy.addContext', "Add context"), 'secondary icon-only composer-action');
+		const addContextButton = appendIconButton(actions, Codicon.add, localize('microide.workbuddy.addContext', "添加上下文"), 'secondary icon-only composer-action');
 		addContextButton.disabled = isBusy || state.status === 'error';
 		addContextButton.addEventListener('click', () => this.openComposerFileSearch());
-		const improveButton = appendIconButton(actions, Codicon.sparkle, localize('microide.workbuddy.improvePrompt', "Improve prompt"), 'secondary icon-only composer-action');
+		const improveButton = appendIconButton(actions, Codicon.sparkle, localize('microide.workbuddy.improvePrompt', "优化提示词"), 'secondary icon-only composer-action');
 		improveButton.disabled = isBusy || state.status === 'error' || this.improvingPrompt;
 		improveButton.classList.toggle('running', this.improvingPrompt);
 		improveButton.addEventListener('click', () => void this.improveComposerPrompt(improveButton));
 		this.turnButton = appendIconButton(
 			actions,
 			isBusy ? Codicon.debugStop : Codicon.arrowUp,
-			isBusy ? localize('microide.pauseGenerationEsc', "Pause generation (Esc)") : localize('microide.send', "Send"),
+			isBusy ? localize('microide.pauseGenerationEsc', "停止生成 (Esc)") : localize('microide.send', "发送"),
 			isBusy ? 'primary stopping icon-only turn' : 'primary icon-only turn'
 		);
-		this.turnButton.setAttribute('aria-label', isBusy ? localize('microide.pauseGenerationEscAria', "Pause generation. Press Escape to stop.") : localize('microide.sendAria', "Send message"));
+		this.turnButton.setAttribute('aria-label', isBusy ? localize('microide.pauseGenerationEscAria', "停止生成。按 Escape 可停止。") : localize('microide.sendAria', "发送消息"));
 		this.turnButton.disabled = state.status === 'error';
 		this.inputElement.disabled = state.status === 'error';
 		this.inputElement.placeholder = isBusy
-			? localize('microide.promptPlaceholderBusy', "Queue another message...")
-			: localize('microide.promptPlaceholder', "Ask MicroWorker to plan, edit, test, or document... @ files, / skills");
+			? localize('microide.promptPlaceholderBusy', "继续输入下一条消息...")
+			: localize('microide.promptPlaceholder', "让 MicroWorker 规划、编辑、测试或写文档... @ 引用文件，/ 调用技能");
 		this.turnButton.addEventListener('click', () => {
 			if (isTurnRunning(this.microIDEAgentService.getState())) {
 				void this.cancelPrompt();
@@ -3099,7 +3099,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const status = this.microIDEAgentService.getState().status;
 		button.disabled = running || status === 'busy' || status === 'error';
 		button.classList.toggle('running', running);
-		button.title = running ? localize('microide.workbuddy.improvingPrompt', "Improving prompt...") : previousTitle ?? localize('microide.workbuddy.improvePrompt', "Improve prompt");
+		button.title = running ? localize('microide.workbuddy.improvingPrompt', "正在优化提示词...") : previousTitle ?? localize('microide.workbuddy.improvePrompt', "优化提示词");
 	}
 
 	private renderContextMeter(state: IMicroIDEAgentState): void {
@@ -3222,7 +3222,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const selected = resolveSelectedModel(state);
 		appendIcon(button, Codicon.chip);
 		const label = dom.append(button, dom.$('span.microide-model-button-label'));
-		label.textContent = selected?.label || selected?.id || localize('microide.modelPending', "Model pending");
+		label.textContent = selected?.label || selected?.id || localize('microide.modelPending', "模型待加载");
 		if (typeof selected?.weight === 'number') {
 			const weight = dom.append(button, dom.$('span.microide-model-button-weight'));
 			weight.textContent = formatWeight(selected.weight);
@@ -3269,8 +3269,8 @@ export class MicroIDEAgentPanelView extends ViewPane {
 				}
 			});
 		};
-		makeTab('models', localize('microide.modelTabModels', "Models"));
-		makeTab('custom', localize('microide.modelTabCustom', "Custom"));
+		makeTab('models', localize('microide.modelTabModels', "模型"));
+		makeTab('custom', localize('microide.modelTabCustom', "自定义"));
 
 		if (this.modelPopoverTab === 'custom') {
 			this.renderCustomModelForm(popover, state);
@@ -3319,7 +3319,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 
 		if (!models.length) {
 			const empty = dom.append(list, dom.$('.microide-model-empty'));
-			empty.textContent = localize('microide.noModels', "No models configured");
+			empty.textContent = localize('microide.noModels', "尚未配置模型");
 		}
 	}
 
@@ -3412,12 +3412,12 @@ export class MicroIDEAgentPanelView extends ViewPane {
 
 		const header = dom.append(popover, dom.$('.microide-permission-popover-header'));
 		const title = dom.append(header, dom.$('span'));
-		title.textContent = localize('microide.permissionModeQuestion', "How should microClaude actions be approved?");
+		title.textContent = localize('microide.permissionModeQuestion', "microClaude 的操作应如何审批？");
 
 		const modes: Array<{ mode: MicroIDEPermissionMode; icon: ThemeIcon; label: string; description: string }> = [
-			{ mode: 'ask', icon: Codicon.lock, label: localize('microide.permissionModeAsk', "Ask every action"), description: localize('microide.permissionModeAskDescription', "Ask before reads, edits, commands, and risky tools.") },
-			{ mode: 'auto', icon: Codicon.shield, label: localize('microide.permissionModeAuto', "Auto edits, ask commands"), description: localize('microide.permissionModeAutoDescription', "Approve safe reads and edits, then ask before command or risky tools.") },
-			{ mode: 'fullAccess', icon: Codicon.warning, label: localize('microide.permissionModeFullAccess', "Full access"), description: localize('microide.permissionModeFullAccessDescription', "Run without permission prompts. Use only for trusted workspaces.") }
+			{ mode: 'ask', icon: Codicon.lock, label: localize('microide.permissionModeAsk', "每次操作都询问"), description: localize('microide.permissionModeAskDescription', "读取、编辑、命令和高风险工具前都询问。") },
+			{ mode: 'auto', icon: Codicon.shield, label: localize('microide.permissionModeAuto', "自动编辑，命令前询问"), description: localize('microide.permissionModeAutoDescription', "自动批准安全读取和编辑，命令或高风险工具前再询问。") },
+			{ mode: 'fullAccess', icon: Codicon.warning, label: localize('microide.permissionModeFullAccess', "完全权限"), description: localize('microide.permissionModeFullAccessDescription', "不再弹出权限确认。仅用于可信工作区。") }
 		];
 
 		for (const option of modes) {
@@ -3484,14 +3484,14 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		};
 
 		const actions: IMicroIDESlashAction[] = [
-			{ section: localize('microide.slashSectionContext', "Context"), icon: Codicon.add, label: localize('microide.slashAttachFile', "Attach file..."), description: localize('microide.slashAttachFileDescription', "Open the workspace file picker"), action: 'attach-file' },
-			{ section: localize('microide.slashSectionContext', "Context"), icon: Codicon.files, label: localize('microide.slashMentionFile', "Mention file from this project..."), description: localize('microide.slashMentionFileDescription', "Choose a file or folder with @"), action: 'mention-file' },
-			{ section: localize('microide.slashSectionContext', "Context"), icon: Codicon.clearAll, label: localize('microide.slashClearConversation', "Clear conversation"), description: localize('microide.slashClearConversationDescription', "Clear the local panel transcript"), action: 'clear-conversation' },
-			{ section: localize('microide.slashSectionContext', "Context"), icon: Codicon.history, label: localize('microide.slashRewind', "Rewind"), description: localize('microide.slashRewindDescription', "Ask microClaude to rewind the conversation"), value: '/rewind', action: 'insert-command' },
-			{ section: localize('microide.slashSectionModel', "Model"), icon: Codicon.chip, label: localize('microide.slashSwitchModel', "Switch model..."), description: selectedModel?.id, value: selectedModel?.label ?? localize('microide.modelDefaultRecommended', "Default"), action: 'switch-model' },
-			{ section: localize('microide.slashSectionModel', "Model"), icon: Codicon.lightbulb, label: localize('microide.slashThinking', "Thinking"), value: state.modelRuntime.thinkingEnabled ? localize('microide.toggleOn', "On") : localize('microide.toggleOff', "Off"), action: 'toggle-thinking' },
-			{ section: localize('microide.slashSectionModel', "Model"), icon: Codicon.account, label: localize('microide.slashAccountUsage', "Account & usage..."), description: localize('microide.slashAccountUsageDescription', "Show usage and status through microClaude"), value: '/cost', action: 'account-usage' },
-			{ section: localize('microide.slashSectionModel', "Model"), icon: Codicon.zap, label: localize('microide.slashFastMode', "Toggle fast mode"), value: fastModeEnabled ? localize('microide.toggleOn', "On") : localize('microide.toggleOff', "Off"), action: 'toggle-fast-mode' }
+			{ section: localize('microide.slashSectionContext', "上下文"), icon: Codicon.add, label: localize('microide.slashAttachFile', "添加文件..."), description: localize('microide.slashAttachFileDescription', "打开工作区文件选择器"), action: 'attach-file' },
+			{ section: localize('microide.slashSectionContext', "上下文"), icon: Codicon.files, label: localize('microide.slashMentionFile', "引用此项目中的文件..."), description: localize('microide.slashMentionFileDescription', "使用 @ 选择文件或文件夹"), action: 'mention-file' },
+			{ section: localize('microide.slashSectionContext', "上下文"), icon: Codicon.clearAll, label: localize('microide.slashClearConversation', "清空对话"), description: localize('microide.slashClearConversationDescription', "清空本地面板记录"), action: 'clear-conversation' },
+			{ section: localize('microide.slashSectionContext', "上下文"), icon: Codicon.history, label: localize('microide.slashRewind', "回退会话"), description: localize('microide.slashRewindDescription', "让 microClaude 回退当前对话"), value: '/rewind', action: 'insert-command' },
+			{ section: localize('microide.slashSectionModel', "模型"), icon: Codicon.chip, label: localize('microide.slashSwitchModel', "切换模型..."), description: selectedModel?.id, value: selectedModel?.label ?? localize('microide.modelDefaultRecommended', "默认"), action: 'switch-model' },
+			{ section: localize('microide.slashSectionModel', "模型"), icon: Codicon.lightbulb, label: localize('microide.slashThinking', "思考"), value: state.modelRuntime.thinkingEnabled ? localize('microide.toggleOn', "开") : localize('microide.toggleOff', "关"), action: 'toggle-thinking' },
+			{ section: localize('microide.slashSectionModel', "模型"), icon: Codicon.account, label: localize('microide.slashAccountUsage', "账户与用量..."), description: localize('microide.slashAccountUsageDescription', "通过 microClaude 查看用量和状态"), value: '/cost', action: 'account-usage' },
+			{ section: localize('microide.slashSectionModel', "模型"), icon: Codicon.zap, label: localize('microide.slashFastMode', "切换快速模式"), value: fastModeEnabled ? localize('microide.toggleOn', "开") : localize('microide.toggleOff', "关"), action: 'toggle-fast-mode' }
 		];
 
 		for (const action of actions) {
@@ -3504,7 +3504,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		}
 
 		if (this.matchesSlashQuery(query, 'effort', 'reasoning effort', effortLabel(currentEffort))) {
-			ensureSection(localize('microide.slashSectionModel', "Model"));
+			ensureSection(localize('microide.slashSectionModel', "模型"));
 			this.appendEffortControl(palette, state);
 			rendered++;
 		}
@@ -3514,7 +3514,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			.slice(0, query ? 12 : 8);
 
 		if (commandMatches.length) {
-			ensureSection(localize('microide.slashSectionCommands', "Slash Commands"));
+			ensureSection(localize('microide.slashSectionCommands', "斜杠命令"));
 			for (const item of commandMatches) {
 				const row = dom.append(palette, dom.$('button.microide-command-suggestion')) as HTMLButtonElement;
 				row.type = 'button';
@@ -3595,7 +3595,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		slider.value = String(effortIndex);
 		const updateControl = (): void => {
 			const effort = REASONING_EFFORTS[effortIndex] ?? REASONING_EFFORTS[2];
-			name.textContent = localize('microide.slashEffortWithValue', "Effort ({0})", effort.label);
+			name.textContent = localize('microide.slashEffortWithValue', "思考强度 ({0})", effort.label);
 			slider.title = effort.label;
 			value.textContent = effort.label;
 			const percent = REASONING_EFFORTS.length <= 1 ? 100 : effortIndex / (REASONING_EFFORTS.length - 1) * 100;
@@ -4006,7 +4006,7 @@ registerAction2(class MicroIDEOpenBrowserPanelAction extends Action2 {
 	constructor() {
 		super({
 			id: 'microide.workbench.openBrowserPanel',
-			title: localize('microide.openTaskBrowserPanel', "Open Browser in Task Panel"),
+			title: localize('microide.openTaskBrowserPanel', "在任务侧栏打开浏览器"),
 			category: localize('microide.category', "MicroWorker"),
 			icon: Codicon.browser
 		});
@@ -4021,7 +4021,7 @@ registerAction2(class MicroIDEOpenChangesPanelAction extends Action2 {
 	constructor() {
 		super({
 			id: 'microide.workbench.openChangesPanel',
-			title: localize('microide.openTaskChangesPanel', "Open Changes in Task Panel"),
+			title: localize('microide.openTaskChangesPanel', "在任务侧栏打开变更"),
 			category: localize('microide.category', "MicroWorker"),
 			icon: Codicon.diffMultiple
 		});
@@ -4102,30 +4102,30 @@ function getWorkBuddyTaskStatusPresentation(state: IMicroIDEAgentState): { reado
 	if (turn) {
 		switch (turn.phase) {
 			case 'waitingPermission':
-				return { label: localize('microide.workbuddy.statusApproval', "Waiting for approval"), icon: Codicon.lock, state: 'blocked' };
+				return { label: localize('microide.workbuddy.statusApproval', "等待批准"), icon: Codicon.lock, state: 'blocked' };
 			case 'runningTool':
-				return { label: localize('microide.workbuddy.statusCallingTools', "Calling tools"), icon: Codicon.tools, state: 'tools' };
+				return { label: localize('microide.workbuddy.statusCallingTools', "调用工具"), icon: Codicon.tools, state: 'tools' };
 			case 'summarizing':
-				return { label: localize('microide.workbuddy.statusGeneratingResponse', "Generating response"), icon: Codicon.commentDiscussion, state: 'generating' };
+				return { label: localize('microide.workbuddy.statusGeneratingResponse', "生成回复"), icon: Codicon.commentDiscussion, state: 'generating' };
 			case 'done':
-				return { label: localize('microide.workbuddy.statusCompleted', "Completed"), icon: Codicon.check, state: 'completed' };
+				return { label: localize('microide.workbuddy.statusCompleted', "已完成"), icon: Codicon.check, state: 'completed' };
 			case 'error':
-				return { label: localize('microide.workbuddy.statusFailed', "Failed"), icon: Codicon.error, state: 'error' };
+				return { label: localize('microide.workbuddy.statusFailed', "失败"), icon: Codicon.error, state: 'error' };
 			case 'interrupted':
-				return { label: localize('microide.workbuddy.statusStopped', "Stopped"), icon: Codicon.debugStop, state: 'error' };
+				return { label: localize('microide.workbuddy.statusStopped', "已停止"), icon: Codicon.debugStop, state: 'error' };
 			case 'sending':
 			case 'thinking':
 			default:
-				return { label: localize('microide.workbuddy.statusThinking', "Thinking"), icon: Codicon.sync, state: 'thinking' };
+				return { label: localize('microide.workbuddy.statusThinking', "思考"), icon: Codicon.sync, state: 'thinking' };
 		}
 	}
 	if (state.status === 'busy' || state.status === 'starting') {
-		return { label: localize('microide.workbuddy.statusThinking', "Thinking"), icon: Codicon.sync, state: 'thinking' };
+		return { label: localize('microide.workbuddy.statusThinking', "思考"), icon: Codicon.sync, state: 'thinking' };
 	}
 	if (state.status === 'error') {
-		return { label: localize('microide.workbuddy.statusFailed', "Failed"), icon: Codicon.error, state: 'error' };
+		return { label: localize('microide.workbuddy.statusFailed', "失败"), icon: Codicon.error, state: 'error' };
 	}
-	return { label: localize('microide.workbuddy.statusCompleted', "Completed"), icon: Codicon.check, state: 'completed' };
+	return { label: localize('microide.workbuddy.statusCompleted', "已完成"), icon: Codicon.check, state: 'completed' };
 }
 
 function renderStatus(container: HTMLElement, state: IMicroIDEAgentState): void {
@@ -4169,21 +4169,21 @@ function turnPhaseIcon(phase: MicroIDETurnPhase): ThemeIcon {
 function turnPhaseLabel(phase: MicroIDETurnPhase): string {
 	switch (phase) {
 		case 'sending':
-			return localize('microide.turnPreparing', "Preparing");
+			return localize('microide.turnPreparing', "准备中");
 		case 'thinking':
-			return localize('microide.turnDeepThinking', "Deep Thinking");
+			return localize('microide.turnDeepThinking', "深度思考");
 		case 'waitingPermission':
-			return localize('microide.turnWaitingPermission', "Needs approval");
+			return localize('microide.turnWaitingPermission', "需要批准");
 		case 'runningTool':
-			return localize('microide.turnRunningTool', "Calling tools");
+			return localize('microide.turnRunningTool', "调用工具");
 		case 'summarizing':
-			return localize('microide.turnGenerating', "Generating");
+			return localize('microide.turnGenerating', "生成中");
 		case 'done':
-			return localize('microide.turnDone', "Completed");
+			return localize('microide.turnDone', "已完成");
 		case 'interrupted':
-			return localize('microide.turnInterrupted', "Stopped");
+			return localize('microide.turnInterrupted', "已停止");
 		case 'error':
-			return localize('microide.turnError', "Failed");
+			return localize('microide.turnError', "失败");
 	}
 }
 
@@ -4195,7 +4195,7 @@ function formatTurnStatusDetail(turn: NonNullable<IMicroIDEAgentState['turnStatu
 		parts.push(turn.currentToolName);
 	}
 	if (turn.pendingPermissionCount > 0) {
-		parts.push(localize('microide.turnPendingPermissions', "{0} pending", turn.pendingPermissionCount));
+		parts.push(localize('microide.turnPendingPermissions', "{0} 个待处理", turn.pendingPermissionCount));
 	}
 	return parts.join(' / ');
 }
@@ -4219,7 +4219,7 @@ function formatSessionStats(session: IMicroIDEAgentSessionTab): string {
 		parts.push(localize('microide.sessionStatsCommands', "{0} commands", session.commandCount));
 	}
 	if (session.changedFileCount) {
-		parts.push(localize('microide.sessionStatsFiles', "{0} files", session.changedFileCount));
+		parts.push(localize('microide.sessionStatsFiles', "{0} 个文件", session.changedFileCount));
 	}
 	if (session.permissionCount) {
 		parts.push(localize('microide.sessionStatsPermissions', "{0} approvals", session.permissionCount));
@@ -4255,9 +4255,9 @@ function sessionDisplayTitle(session: IMicroIDEAgentSessionTab): string {
 
 function sessionTabMeta(session: IMicroIDEAgentSessionTab): string {
 	if (session.status === 'busy') {
-		return localize('microide.sessionTabBusy', "Running");
+		return localize('microide.sessionTabBusy', "运行中");
 	}
-	return session.model ?? localize('microide.sessionTabReady', "Ready");
+	return session.model ?? localize('microide.sessionTabReady', "就绪");
 }
 
 function pathBasename(value: string): string {
@@ -4510,7 +4510,7 @@ class TranscriptRenderer extends Disposable {
 
 		// Render assistant prose as markdown once it is complete (code blocks get syntax
 		// highlighting + links become clickable); keep streaming text plain for throughput.
-		const text = message.text || (message.state === 'streaming' ? localize('microide.streaming', "Thinking") : '');
+		const text = message.text || (message.state === 'streaming' ? localize('microide.streaming', "思考") : '');
 		if (message.role === 'user') {
 			this.renderUserMessageBody(body, message, text, store);
 		} else if (message.role === 'assistant' && message.state === 'complete' && message.text.trim()) {
@@ -4854,7 +4854,7 @@ class TranscriptRenderer extends Disposable {
 				const compact = dom.append(preview, dom.$('.microide-diff-compact-preview'));
 				compact.tabIndex = 0;
 				compact.setAttribute('role', 'button');
-				compact.title = localize('microide.diffClickToExpand', "Click to expand");
+				compact.title = localize('microide.diffClickToExpand', "点击展开");
 				const head = dom.append(compact, dom.$('.microide-diff-compact-head'));
 				const title = dom.append(head, dom.$('.microide-diff-title'));
 				appendIcon(title, Codicon.diff);
@@ -4864,7 +4864,7 @@ class TranscriptRenderer extends Disposable {
 				const lines = dom.append(compact, dom.$('.microide-diff-compact-lines'));
 				this.renderDiffLines(lines, diff, 4);
 				const hint = dom.append(compact, dom.$('.microide-diff-compact-hint'));
-				hint.textContent = localize('microide.diffClickToExpand', "Click to expand");
+				hint.textContent = localize('microide.diffClickToExpand', "点击展开");
 				const expand = (): void => {
 					this.diffOpenState.set(stateKey, true);
 					render();
@@ -4888,13 +4888,13 @@ class TranscriptRenderer extends Disposable {
 			const actions = dom.append(header, dom.$('.microide-diff-actions'));
 			const openButton = dom.append(actions, dom.$('button.microide-diff-open')) as HTMLButtonElement;
 			openButton.type = 'button';
-			openButton.title = localize('microide.openDiffEditor', "Open in editor");
+			openButton.title = localize('microide.openDiffEditor', "在编辑器中打开");
 			appendIcon(openButton, Codicon.goToFile);
 			previewStore.add(dom.addDisposableListener(openButton, 'click', e => { e.stopPropagation(); this.host.openDiff(diff); }));
 			if (options.compact) {
 				const closeButton = dom.append(actions, dom.$('button.microide-diff-open')) as HTMLButtonElement;
 				closeButton.type = 'button';
-				closeButton.title = localize('microide.collapseDiff', "Collapse diff");
+				closeButton.title = localize('microide.collapseDiff', "收起 diff");
 				appendIcon(closeButton, Codicon.close);
 				previewStore.add(dom.addDisposableListener(closeButton, 'click', e => {
 					e.stopPropagation();
@@ -4907,7 +4907,7 @@ class TranscriptRenderer extends Disposable {
 			this.renderDiffLines(linesContainer, diff, 600);
 			if (totalLines > 600) {
 				const truncated = dom.append(preview, dom.$('.microide-diff-expand'));
-				truncated.textContent = localize('microide.diffLargeOpenEditor', "Large diff truncated. Open in editor to inspect every line.");
+				truncated.textContent = localize('microide.diffLargeOpenEditor', "大型 diff 已截断。请在编辑器中查看完整内容。");
 			}
 		};
 		render();
@@ -4921,7 +4921,7 @@ class TranscriptRenderer extends Disposable {
 			for (const line of hunk.lines) {
 				if (rendered >= limit) {
 					const truncated = dom.append(container, dom.$('.microide-diff-truncated'));
-					truncated.textContent = localize('microide.diffTruncated', "Diff preview truncated");
+					truncated.textContent = localize('microide.diffTruncated', "Diff 预览已截断");
 					return rendered;
 				}
 				const row = dom.append(container, dom.$(`.microide-diff-line.${line.kind}`));
@@ -4966,7 +4966,7 @@ class TranscriptRenderer extends Disposable {
 			const raw = match[0];
 			const link = dom.$('a.microide-path-link') as HTMLAnchorElement;
 			link.textContent = raw;
-			link.title = localize('microide.openPath', "Open {0}", raw);
+			link.title = localize('microide.openPath', "打开 {0}", raw);
 			link.setAttribute('role', 'button');
 			const target = raw;
 			store.add(dom.addDisposableListener(link, 'click', e => { e.preventDefault(); e.stopPropagation(); this.host.openPath(target.replace(/:\d+(?::\d+)?$/, '')); }));
@@ -4990,7 +4990,7 @@ function slashCommandText(command: IMicroClaudeSlashCommand): string {
 function slashCommandDescription(command: IMicroClaudeSlashCommand): string {
 	const name = command.name.replace(/^\//, '').trim().toLowerCase();
 	if (name.includes('config')) {
-		return localize('microide.slashConfigShortDescription', "Update or inspect MicroWorker config.");
+		return localize('microide.slashConfigShortDescription', "更新或查看 MicroWorker 配置。");
 	}
 	return command.description;
 }
@@ -5052,19 +5052,19 @@ function turnStatusIcon(phase: MicroIDETurnPhase): ThemeIcon {
 function turnStatusLabel(status: IMicroIDETurnStatus): string {
 	switch (status.phase) {
 		case 'sending':
-			return localize('microide.turnStatusPreparing', "Preparing for execution");
+			return localize('microide.turnStatusPreparing', "准备执行");
 		case 'thinking':
-			return localize('microide.turnStatusDeepThinking', "Deep Thinking");
+			return localize('microide.turnStatusDeepThinking', "深度思考");
 		case 'runningTool':
 			return status.currentToolName
-				? localize('microide.turnStatusCallingTool', "Calling {0}", status.currentToolName)
-				: localize('microide.turnStatusCallingTools', "Calling tools");
+				? localize('microide.turnStatusCallingTool', "调用 {0}", status.currentToolName)
+				: localize('microide.turnStatusCallingTools', "调用工具");
 		case 'waitingPermission':
 			return status.pendingPermissionCount > 1
-				? localize('microide.turnStatusWaitingPermissions', "Waiting for {0} approvals", status.pendingPermissionCount)
-				: localize('microide.turnStatusWaitingPermission', "Waiting for approval");
+				? localize('microide.turnStatusWaitingPermissions', "等待 {0} 个批准", status.pendingPermissionCount)
+				: localize('microide.turnStatusWaitingPermission', "等待批准");
 		case 'summarizing':
-			return localize('microide.turnStatusGenerating', "Generating response");
+			return localize('microide.turnStatusGenerating', "生成回复");
 		default:
 			return '';
 	}
@@ -5140,7 +5140,7 @@ function formatToolInlineMeta(message: IMicroIDEAgentMessage): string {
 		return localize('microide.askUserQuestionNeedsAnswer', "Needs answer");
 	}
 	if (message.state === 'streaming') {
-		return localize('microide.toolRunning', "Running");
+		return localize('microide.toolRunning', "运行中");
 	}
 	if (message.state === 'error' || message.isError) {
 		return localize('microide.toolError', "Error");
@@ -5294,7 +5294,7 @@ function formatToolActionLabel(message: IMicroIDEAgentMessage): string {
 	if (message.toolEffect === 'read' || lower.includes('read') || lower.includes('grep') || lower.includes('glob') || lower.includes('list')) {
 		return localize('microide.uiToolVerbRead', "Read");
 	}
-	return toolName || localize('microide.uiToolVerbOpen', "Open");
+	return toolName || localize('microide.uiToolVerbOpen', "打开");
 }
 
 function getCommandDisplayOutput(message: IMicroIDEAgentMessage): string | undefined {
@@ -5323,7 +5323,7 @@ function extractCommandText(value: unknown): string | undefined {
 
 function toolStateLabel(message: IMicroIDEAgentMessage): string {
 	if (message.state === 'streaming') {
-		return localize('microide.toolRunning', "Running");
+		return localize('microide.toolRunning', "运行中");
 	}
 	if (message.state === 'error' || message.isError) {
 		return localize('microide.toolError', "Error");
@@ -5913,7 +5913,7 @@ function statusLabel(status: IMicroIDEAgentState['status']): string {
 		case 'starting':
 			return localize('microide.statusStarting', "Starting");
 		case 'ready':
-			return localize('microide.statusReady', "Ready");
+			return localize('microide.statusReady', "就绪");
 		case 'busy':
 			return localize('microide.statusBusy', "Busy");
 		case 'error':
@@ -5959,19 +5959,19 @@ function permissionRequestEffect(request: IMicroIDEPermissionRequest): MicroIDET
 function permissionPromptTitle(request: IMicroIDEPermissionRequest): string {
 	switch (permissionRequestEffect(request)) {
 	case 'command':
-		return localize('microide.permissionPromptCommand', "Run this command?");
+		return localize('microide.permissionPromptCommand', "运行此命令？");
 	case 'edit':
 		return request.path
-			? localize('microide.permissionPromptWritePath', "Allow write to {0}?", request.path)
-			: localize('microide.permissionPromptEdit', "Allow this file change?");
+			? localize('microide.permissionPromptWritePath', "允许写入 {0}？", request.path)
+			: localize('microide.permissionPromptEdit', "允许这个文件改动？");
 	case 'read':
-		return localize('microide.permissionPromptRead', "Allow this read?");
+		return localize('microide.permissionPromptRead', "允许读取？");
 	case 'network':
-		return localize('microide.permissionPromptNetwork', "Allow this external tool?");
+		return localize('microide.permissionPromptNetwork', "允许这个外部工具？");
 	case 'memory':
-		return localize('microide.permissionPromptMemory', "Allow memory access?");
+		return localize('microide.permissionPromptMemory', "允许访问记忆？");
 	default:
-		return localize('microide.permissionPromptGeneric', "Allow {0}?", request.toolName);
+		return localize('microide.permissionPromptGeneric', "允许 {0}？", request.toolName);
 	}
 }
 
@@ -5989,24 +5989,24 @@ function permissionModeIcon(mode: MicroIDEPermissionMode): ThemeIcon {
 function permissionModeShortLabel(mode: MicroIDEPermissionMode): string {
 	switch (mode) {
 		case 'ask':
-			return localize('microide.permissionModeAskShort', "Ask");
+			return localize('microide.permissionModeAskShort', "询问");
 		case 'fullAccess':
-			return localize('microide.permissionModeFullShort', "Full");
+			return localize('microide.permissionModeFullShort', "完全权限");
 		default:
-			return localize('microide.permissionModeAutoShort', "Edits auto");
+			return localize('microide.permissionModeAutoShort', "自动编辑");
 	}
 }
 
 function teamStatusLabel(status: IMicroIDEAgentState['team']['status']): string {
 	switch (status) {
 		case 'active':
-			return localize('microide.teamStatusActive', "Active");
+			return localize('microide.teamStatusActive', "活跃");
 		case 'deleting':
-			return localize('microide.teamStatusDeleting', "Cleaning up");
+			return localize('microide.teamStatusDeleting', "清理中");
 		case 'error':
-			return localize('microide.teamStatusError', "Needs attention");
+			return localize('microide.teamStatusError', "需要处理");
 		default:
-			return localize('microide.teamStatusInactive', "Ready");
+			return localize('microide.teamStatusInactive', "就绪");
 	}
 }
 
