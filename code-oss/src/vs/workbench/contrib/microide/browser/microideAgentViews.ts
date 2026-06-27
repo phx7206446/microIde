@@ -1363,36 +1363,30 @@ export class MicroIDEAgentPanelView extends ViewPane {
 	}
 
 	private renderTaskProgressCard(container: HTMLElement, state: IMicroIDEAgentState): void {
-		const presentation = getWorkBuddyTaskStatusPresentation(state);
-		const tools = state.messages.filter(message => message.role === 'tool' && message.sessionId === state.activeSessionId).slice(-5);
+		const todos = state.todos;
+		const completed = todos.filter(todo => isTodoComplete(todo.status)).length;
 		const header = dom.append(container, dom.$('.microide-workbuddy-task-progress-card-head'));
 		const title = dom.append(header, dom.$('.microide-workbuddy-task-progress-card-title'));
 		title.textContent = localize('microide.workbuddy.progressCardTitle', "Progress");
 		const count = dom.append(header, dom.$('.microide-workbuddy-task-progress-card-count'));
-		count.textContent = String(Math.max(1, tools.length || (state.turnStatus ? 1 : 0)));
+		count.textContent = todos.length ? String(completed) + '/' + String(todos.length) : '0';
 
-		const list = dom.append(container, dom.$('.microide-workbuddy-task-progress-list'));
-		const statusRow = dom.append(list, dom.$('.microide-workbuddy-task-progress-row.current'));
-		appendIcon(statusRow, presentation.icon);
-		const statusText = dom.append(statusRow, dom.$('span'));
-		statusText.textContent = state.turnStatus ? presentation.label + ' / ' + formatTurnStatusDetail(state.turnStatus) : presentation.label;
-
-		if (!tools.length) {
+		const list = dom.append(container, dom.$('.microide-workbuddy-task-progress-list.todo-list'));
+		if (!todos.length) {
 			const empty = dom.append(list, dom.$('.microide-workbuddy-task-progress-empty'));
-			empty.textContent = localize('microide.workbuddy.progressNoTools', "工具调用会在这里汇总。");
+			empty.textContent = localize('microide.workbuddy.progressNoTodos', "暂无待办。MicroWorker 规划任务后会在这里同步。");
 			return;
 		}
 
-		for (const tool of tools) {
-			const row = dom.append(list, dom.$('.microide-workbuddy-task-progress-row'));
-			row.classList.toggle('error', tool.state === 'error' || Boolean(tool.isError));
-			row.classList.toggle('running', tool.state === 'streaming');
-			appendIcon(row, tool.state === 'streaming' ? Codicon.sync : tool.state === 'error' || tool.isError ? Codicon.error : Codicon.check);
+		for (const todo of todos) {
+			const row = dom.append(list, dom.$('.microide-workbuddy-task-progress-row.todo'));
+			row.classList.add('status-' + cssToken(todo.status));
+			appendIcon(row, taskStatusIcon(todo.status));
 			const copy = dom.append(row, dom.$('.microide-workbuddy-task-progress-row-copy'));
 			const label = dom.append(copy, dom.$('.microide-workbuddy-task-progress-row-label'));
-			label.textContent = formatToolTitle(tool);
+			label.textContent = todo.text;
 			const detail = dom.append(copy, dom.$('.microide-workbuddy-task-progress-row-detail'));
-			detail.textContent = formatToolInlineMeta(tool);
+			detail.textContent = todoStatusLabel(todo.status);
 		}
 	}
 	private renderWorkBuddyTaskStatus(container: HTMLElement, state: IMicroIDEAgentState): void {
@@ -1670,8 +1664,6 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			: WORKBUDDY_AUTOMATION_SECTIONS.filter(section => section.id === this.automationCategoryFilter);
 
 		const header = dom.append(container, dom.$('.microide-workbuddy-collection-header automation-hero'));
-		const eyebrow = dom.append(header, dom.$('.microide-workbuddy-collection-eyebrow'));
-		eyebrow.textContent = localize('microide.workbuddy.automationEyebrow', "AUTOMATION TEMPLATES");
 		const title = dom.append(header, dom.$('.microide-workbuddy-collection-title'));
 		title.textContent = localize('microide.workbuddy.automationSurfaceTitle', "自动化");
 		const subtitle = dom.append(header, dom.$('.microide-workbuddy-collection-subtitle'));
@@ -2727,23 +2719,30 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		host.removeAttribute('role');
 		host.removeAttribute('aria-modal');
 		host.removeAttribute('aria-label');
-		const card = dom.append(host, dom.$('.microide-permission-prompt-card'));
+		const card = dom.append(host, dom.$('.microide-permission-prompt-card.codex-style'));
 
-		const title = dom.append(card, dom.$('.microide-permission-prompt-title'));
+		const head = dom.append(card, dom.$('.microide-permission-prompt-head'));
+		const icon = dom.append(head, dom.$('.microide-permission-prompt-icon'));
+		appendIcon(icon, permissionRequestEffect(request) === 'command' ? Codicon.terminal : permissionRequestEffect(request) === 'edit' ? Codicon.edit : Codicon.shield);
+		const headCopy = dom.append(head, dom.$('.microide-permission-prompt-head-copy'));
+		const title = dom.append(headCopy, dom.$('.microide-permission-prompt-title'));
 		title.textContent = permissionPromptTitle(request);
+		const subtitle = dom.append(headCopy, dom.$('.microide-permission-prompt-summary'));
+		subtitle.textContent = request.summary && request.summary !== request.command && request.summary !== request.path
+			? request.summary
+			: localize('microide.permissionPromptSubtitle', "MicroWorker 需要你的确认后继续执行。");
 
 		if (request.command) {
 			const detail = dom.append(card, dom.$('.microide-permission-prompt-command'));
 			detail.textContent = request.command;
-		}
-		if (request.summary && request.summary !== request.command && request.summary !== request.path) {
-			const summary = dom.append(card, dom.$('.microide-permission-prompt-summary'));
-			summary.textContent = request.summary;
+		} else if (request.path) {
+			const detail = dom.append(card, dom.$('.microide-permission-prompt-command.path'));
+			detail.textContent = request.path;
 		}
 
 		const options = dom.append(card, dom.$('.microide-permission-prompt-options'));
 		const addOption = (index: number, label: string, primary: boolean, run: () => void): void => {
-			const option = dom.append(options, dom.$(`button.microide-permission-prompt-option${primary ? '.primary' : ''}`)) as HTMLButtonElement;
+			const option = dom.append(options, dom.$('button.microide-permission-prompt-option' + (primary ? '.primary' : ''))) as HTMLButtonElement;
 			option.type = 'button';
 			const key = dom.append(option, dom.$('span.microide-permission-prompt-option-key'));
 			key.textContent = String(index);
@@ -2752,9 +2751,9 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			option.addEventListener('click', run);
 		};
 
-		addOption(1, localize('microide.permissionYes', "是"), true, () => void this.resolvePromptApprove(request));
-		addOption(2, localize('microide.permissionYesAllEditsSession', "是，并允许本会话所有编辑"), false, () => void this.resolvePromptApproveProject(request));
-		addOption(3, localize('microide.permissionNo', "否"), false, () => void this.resolvePromptDeny(request));
+		addOption(1, localize('microide.permissionYes', "允许"), true, () => void this.resolvePromptApprove(request));
+		addOption(2, localize('microide.permissionYesAllEditsSession', "允许本会话同类操作"), false, () => void this.resolvePromptApproveProject(request));
+		addOption(3, localize('microide.permissionNo', "拒绝"), false, () => void this.resolvePromptDeny(request));
 
 		const instead = dom.append(card, dom.$('input.microide-permission-prompt-instead')) as HTMLInputElement;
 		instead.type = 'text';
@@ -2770,7 +2769,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		});
 
 		const cancel = dom.append(card, dom.$('.microide-permission-prompt-cancel'));
-		cancel.textContent = localize('microide.permissionEscCancel', "按 Esc 取消");
+		cancel.textContent = localize('microide.permissionEscCancel', "Esc 取消");
 
 		// Number-key shortcuts (1/2/3) when focus is not in the "instead" input.
 		host.onkeydown = e => {
@@ -6249,6 +6248,25 @@ function teamStatusLabel(status: IMicroIDEAgentState['team']['status']): string 
 		default:
 			return localize('microide.teamStatusInactive', "就绪");
 	}
+}
+
+function isTodoComplete(status: string): boolean {
+	const normalized = status.toLowerCase();
+	return normalized === 'completed' || normalized === 'complete' || normalized === 'done';
+}
+
+function todoStatusLabel(status: string): string {
+	const normalized = status.toLowerCase();
+	if (isTodoComplete(status)) {
+		return localize('microide.todoStatusCompleted', "已完成");
+	}
+	if (normalized === 'running' || normalized === 'in_progress' || normalized === 'in-progress') {
+		return localize('microide.todoStatusInProgress', "进行中");
+	}
+	if (normalized === 'blocked' || normalized === 'failed' || normalized === 'error') {
+		return localize('microide.todoStatusBlocked', "需要处理");
+	}
+	return localize('microide.todoStatusPending', "待处理");
 }
 
 function taskStatusIcon(status: string): ThemeIcon {

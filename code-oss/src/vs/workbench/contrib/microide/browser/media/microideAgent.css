@@ -6334,3 +6334,276 @@ body.microide-workbuddy-workbench .microide-agent-root.microide-task-side-panel-
 	}
 }
 /* End MicroWorker workspace refinement */
+
+
+/* MicroWorker Codex task refinement */
+body.microide-workbuddy-workbench .microide-workbuddy-collection-header.automation-hero {
+	align-items: center;
+	padding-top: 10px;
+}
+
+body.microide-workbuddy-workbench .microide-workbuddy-collection-header.automation-hero .microide-workbuddy-collection-title {
+	grid-column: 1;
+}
+
+body.microide-workbuddy-workbench .microide-workbuddy-collection-header.automation-hero .microide-workbuddy-collection-subtitle {
+	grid-column: 1;
+	max-width: 720px;
+}
+
+body.microide-workbuddy-workbench .microide-workbuddy-collection-header.automation-hero .microide-workbuddy-automation-stats {
+	grid-column: 2;
+	grid-row: 1 / span 2;
+	align-self: center;
+}
+
+.microide-workbuddy-task-progress-list.todo-list {
+	gap: 10px;
+}
+
+.microide-workbuddy-task-progress-row.todo {
+	grid-template-columns: 20px minmax(0, 1fr);
+	padding: 2px 0;
+}
+
+.microide-workbuddy-task-progress-row.todo > .microide-icon {
+	box-sizing: border-box;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	border: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 72%, transparent);
+	border-radius: 999px;
+	color: var(--vscode-descriptionForeground);
+	background: color-mix(in srgb, var(--vscode-input-background) 82%, transparent);
+	font-size: 11px;
+}
+
+.microide-workbuddy-task-progress-row.todo.status-completed > .microide-icon,
+.microide-workbuddy-task-progress-row.todo.status-complete > .microide-icon,
+.microide-workbuddy-task-progress-row.todo.status-done > .microide-icon {
+	color: var(--vscode-testing-iconPassed, #2ea043);
+	border-color: color-mix(in srgb, var(--vscode-testing-iconPassed, #2ea043) 44%, transparent);
+	background: color-mix(in srgb, var(--vscode-testing-iconPassed, #2ea043) 9%, transparent);
+}
+
+.microide-workbuddy-task-progress-row.todo.status-in-progress > .microide-icon,
+.microide-workbuddy-task-progress-row.todo.status-in_progress > .microide-icon,
+.microide-workbuddy-task-progress-row.todo.status-running > .microide-icon {
+	color: var(--vscode-progressBar-background);
+	border-color: color-mix(in srgb, var(--vscode-progressBar-background) 44%, transparent);
+	animation: microide-spin 1.35s linear infinite;
+}
+
+.microide-workbuddy-task-progress-row.todo.status-blocked > .microide-icon,
+.microide-workbuddy-task-progress-row.todo.status-error > .microide-icon,
+.microide-workbuddy-task-progress-row.todo.status-failed > .microide-icon {
+	color: var(--vscode-errorForeground);
+	border-color: color-mix(in srgb, var(--vscode-errorForeground) 44%, transparent);
+	animation: none;
+}
+
+.microide-workbuddy-task-progress-row.todo.status-completed .microide-workbuddy-task-progress-row-label,
+.microide-workbuddy-task-progress-row.todo.status-complete .microide-workbuddy-task-progress-row-label,
+.microide-workbuddy-task-progress-row.todo.status-done .microide-workbuddy-task-progress-row-label {
+	color: color-mix(in srgb, var(--vscode-foreground) 62%, var(--vscode-descriptionForeground));
+	text-decoration: line-through;
+	text-decoration-thickness: 1px;
+}
+
+.microide-tool-card {
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	overflow: visible;
+}
+
+.microide-tool-card + .microide-tool-card {
+	margin-top: 2px;
+}
+
+.microide-tool-summary,
+.microide-tool-card.team-tool .microide-tool-summary {
+	grid-template-columns: 24px minmax(0, 1fr) auto auto;
+	min-height: 34px;
+	padding: 5px 8px 5px 0;
+	border-radius: 8px;
+}
+
+.microide-tool-summary:hover,
+.microide-tool-summary:focus-visible {
+	background: color-mix(in srgb, var(--vscode-list-hoverBackground) 54%, transparent);
+}
+
+.microide-tool-state-dot {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	border: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 76%, transparent);
+	border-radius: 7px;
+	background: color-mix(in srgb, var(--vscode-input-background) 76%, transparent);
+	box-shadow: none;
+}
+
+.microide-tool-state-dot > .microide-icon {
+	font-size: 12px;
+	color: var(--vscode-descriptionForeground);
+}
+
+.microide-tool-state-dot.streaming > .microide-icon {
+	color: var(--vscode-progressBar-background);
+	animation: microide-spin 1.25s linear infinite;
+}
+
+.microide-tool-state-dot.error > .microide-icon {
+	color: var(--vscode-errorForeground);
+}
+
+.microide-tool-card.effect-command .microide-tool-state-dot > .microide-icon {
+	color: var(--vscode-terminal-ansiYellow, var(--vscode-editorWarning-foreground));
+}
+
+.microide-tool-card.effect-edit .microide-tool-state-dot > .microide-icon {
+	color: var(--vscode-gitDecoration-modifiedResourceForeground, var(--vscode-editorWarning-foreground));
+}
+
+.microide-tool-title {
+	font-size: 12px;
+	font-weight: 650;
+}
+
+.microide-tool-meta {
+	max-width: 160px;
+	font-size: 11px;
+}
+
+.microide-tool-chevron {
+	width: 18px;
+}
+
+.microide-tool-body {
+	margin: 2px 0 8px 24px;
+	padding: 8px 10px;
+	border-left: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 72%, transparent);
+	background: color-mix(in srgb, var(--vscode-input-background) 38%, transparent);
+}
+
+.microide-tool-card > .microide-diff {
+	margin: 4px 0 10px 24px;
+}
+
+body.microide-workbuddy-workbench .microide-permission-prompt.visible {
+	padding: 0 28px 18px;
+}
+
+.microide-permission-prompt-card.codex-style {
+	gap: 12px;
+	max-width: 760px;
+	margin: 0 auto;
+	padding: 16px;
+	border: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 82%, transparent);
+	border-radius: 14px;
+	background: color-mix(in srgb, var(--vscode-input-background) 94%, var(--vscode-editor-background));
+	box-shadow: 0 24px 64px color-mix(in srgb, var(--vscode-widget-shadow, #000) 12%, transparent);
+}
+
+.microide-permission-prompt-head {
+	display: grid;
+	grid-template-columns: 34px minmax(0, 1fr);
+	gap: 12px;
+	align-items: start;
+}
+
+.microide-permission-prompt-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border: 1px solid color-mix(in srgb, var(--vscode-textLink-foreground) 38%, transparent);
+	border-radius: 10px;
+	color: var(--vscode-textLink-foreground);
+	background: color-mix(in srgb, var(--vscode-textLink-foreground) 9%, transparent);
+}
+
+.microide-permission-prompt-head-copy {
+	min-width: 0;
+}
+
+.microide-permission-prompt-card.codex-style .microide-permission-prompt-title {
+	padding: 0;
+	font-size: 15px;
+	font-weight: 760;
+	line-height: 1.35;
+}
+
+.microide-permission-prompt-card.codex-style .microide-permission-prompt-summary {
+	margin-top: 3px;
+	font-size: 12px;
+	line-height: 1.45;
+}
+
+.microide-permission-prompt-card.codex-style .microide-permission-prompt-command {
+	padding: 10px 12px;
+	border: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 64%, transparent);
+	border-radius: 10px;
+	background: color-mix(in srgb, var(--vscode-textCodeBlock-background, var(--vscode-input-background)) 82%, transparent);
+	font-size: 12px;
+	line-height: 1.55;
+}
+
+.microide-permission-prompt-card.codex-style .microide-permission-prompt-options {
+	display: grid;
+	grid-template-columns: 1fr 1.2fr 0.8fr;
+	gap: 8px;
+}
+
+.microide-permission-prompt-card.codex-style .microide-permission-prompt-option {
+	justify-content: center;
+	min-height: 34px;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--vscode-input-background) 72%, transparent);
+	font-weight: 650;
+}
+
+.microide-permission-prompt-card.codex-style .microide-permission-prompt-option.primary {
+	color: var(--vscode-button-foreground);
+	border-color: var(--vscode-button-background);
+	background: var(--vscode-button-background);
+}
+
+.microide-permission-prompt-card.codex-style .microide-permission-prompt-option:not(.primary):last-child {
+	color: var(--vscode-errorForeground);
+	border-color: color-mix(in srgb, var(--vscode-errorForeground) 38%, var(--vscode-sideBarSectionHeader-border));
+}
+
+.microide-permission-prompt-card.codex-style .microide-permission-prompt-option-key {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 18px;
+	height: 18px;
+	border-radius: 999px;
+	background: color-mix(in srgb, currentColor 10%, transparent);
+	font-size: 10px;
+}
+
+.microide-permission-prompt-card.codex-style .microide-permission-prompt-instead {
+	height: 36px;
+	border-radius: 10px;
+}
+
+.microide-permission-prompt-card.codex-style .microide-permission-prompt-cancel {
+	text-align: right;
+}
+
+@media (max-width: 820px) {
+	.microide-permission-prompt-card.codex-style .microide-permission-prompt-options {
+		grid-template-columns: 1fr;
+	}
+}
+/* End MicroWorker Codex task refinement */
