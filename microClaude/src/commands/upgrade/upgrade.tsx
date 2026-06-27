@@ -1,0 +1,54 @@
+import type { LocalJSXCommandContext } from '../../commands.js'
+import { getOauthProfileFromOauthToken } from '../../services/oauth/getOauthProfile.js'
+import type { LocalJSXCommandOnDone } from '../../types/command.js'
+import {
+  getClaudeAIOAuthTokens,
+  isClaudeAISubscriber,
+} from '../../utils/auth.js'
+import { openBrowser } from '../../utils/browser.js'
+import { logError } from '../../utils/log.js'
+
+export async function call(
+  onDone: LocalJSXCommandOnDone,
+  _context: LocalJSXCommandContext,
+): Promise<null> {
+  try {
+    if (isClaudeAISubscriber()) {
+      const tokens = getClaudeAIOAuthTokens()
+      let isMax20x = false
+
+      if (tokens?.subscriptionType && tokens?.rateLimitTier) {
+        isMax20x =
+          tokens.subscriptionType === 'max' &&
+          tokens.rateLimitTier === 'default_claude_max_20x'
+      } else if (tokens?.accessToken) {
+        const profile = await getOauthProfileFromOauthToken(tokens.accessToken)
+        isMax20x =
+          profile?.organization?.organization_type === 'claude_max' &&
+          profile?.organization?.rate_limit_tier === 'default_claude_max_20x'
+      }
+
+      if (isMax20x) {
+        setTimeout(
+          onDone,
+          0,
+          'You are already on the highest Max subscription plan. For additional usage, switch to an API usage-billed account.',
+        )
+        return null
+      }
+    }
+
+    const url = 'https://claude.ai/upgrade/max'
+    await openBrowser(url)
+    setTimeout(onDone, 0, `Opened browser: ${url}`)
+  } catch (error) {
+    logError(error as Error)
+    setTimeout(
+      onDone,
+      0,
+      'Failed to open browser. Please visit https://claude.ai/upgrade/max to upgrade.',
+    )
+  }
+
+  return null
+}

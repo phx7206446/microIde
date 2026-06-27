@@ -1,0 +1,2 @@
+Allow only actions explicitly covered by Anthropic-internal policy and configured allow rules.
+Deny ambiguous, destructive, privileged, or production-impacting actions by default.

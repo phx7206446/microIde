@@ -1,0 +1,27 @@
+{
+  "name": "microclaude",
+  "version": "0.1.0",
+  "engineVersion": "0.2.2",
+  "protocolVersion": "1.0.0",
+  "platform": "portable-dev",
+  "entry": "adapter/index.js",
+  "runtime": {
+    "type": "node",
+    "version": ">=18.0.0"
+  },
+  "capabilities": {
+    "chat": true,
+    "agent": true,
+    "applyPatch": true,
+    "terminal": true,
+    "mcp": true,
+    "repoWiki": false,
+    "memory": false,
+    "streamingEvents": true,
+    "cancellation": true,
+    "permissionResolution": true
+  },
+  "checksum": {
+    "sha256": null
+  }
+}

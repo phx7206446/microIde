@@ -1,0 +1,17 @@
+{
+  "name": "@microide/microclaude-sidecar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MicroIDE sidecar adapter for the bundled microClaude engine.",
+  "bin": {
+    "microclaude-sidecar": "./adapter/index.js"
+  },
+  "scripts": {
+    "start": "node ./adapter/index.js",
+    "smoke": "node ./tests/smoke.mjs"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

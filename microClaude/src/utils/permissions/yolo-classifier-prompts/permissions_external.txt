@@ -1,0 +1,2 @@
+Allow only actions that are explicitly covered by the configured allow rules.
+Prefer denying ambiguous, destructive, credential-related, or security-sensitive actions.

@@ -1,0 +1,11 @@
+node_modules/
+bun.lock
+dist/
+.DS_Store
+.claude/settings.local.json
+.claude/*.log
+.claude/gateway*.json
+.codex_tmp/
+benchmark-test/tmp*.settings.json
+benchmark-test/results/*
+!benchmark-test/results/.gitkeep

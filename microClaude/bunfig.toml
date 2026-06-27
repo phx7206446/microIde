@@ -1,0 +1,2 @@
+[build]
+alias = { "src" = "./src", "react/compiler-runtime" = "react-compiler-runtime" }

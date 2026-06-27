@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://microide.local/schemas/microide-jsonrpc-v1.schema.json",
+  "title": "MicroIDE microClaude Sidecar Protocol v1",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/request" },
+    { "$ref": "#/$defs/response" },
+    { "$ref": "#/$defs/event" }
+  ],
+  "$defs": {
+    "id": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "null" }
+      ]
+    },
+    "request": {
+      "type": "object",
+      "required": ["jsonrpc", "id", "method"],
+      "properties": {
+        "jsonrpc": { "const": "2.0" },
+        "id": { "$ref": "#/$defs/id" },
+        "method": {
+          "type": "string",
+          "enum": [
+            "sidecar.ping",
+            "sidecar.getCapabilities",
+            "sidecar.getConfiguration",
+            "commands.list",
+            "skills.list",
+            "plugins.list",
+            "models.list",
+            "session.start",
+            "session.resume",
+            "session.cancel",
+            "session.dispose",
+            "message.send",
+            "message.continue",
+            "permission.resolve"
+          ]
+        },
+        "params": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "response": {
+      "type": "object",
+      "required": ["jsonrpc", "id"],
+      "properties": {
+        "jsonrpc": { "const": "2.0" },
+        "id": { "$ref": "#/$defs/id" },
+        "result": {},
+        "error": {
+          "type": "object",
+          "required": ["code", "message"],
+          "properties": {
+            "code": { "type": "integer" },
+            "message": { "type": "string" },
+            "data": {}
+          },
+          "additionalProperties": false
+        }
+      },
+      "oneOf": [
+        { "required": ["result"] },
+        { "required": ["error"] }
+      ],
+      "additionalProperties": false
+    },
+    "event": {
+      "type": "object",
+      "required": ["type", "event", "payload"],
+      "properties": {
+        "type": { "const": "event" },
+        "sessionId": { "type": ["string", "null"] },
+        "event": {
+          "type": "string",
+          "enum": [
+            "assistant.delta",
+            "assistant.message",
+            "todo.update",
+            "tool.request",
+            "tool.result",
+            "permission.request",
+            "permission.cancel",
+            "engine.started",
+            "engine.stdout",
+            "engine.stderr",
+            "session.result",
+            "session.title",
+            "session.status",
+            "session.error"
+          ]
+        },
+        "payload": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
