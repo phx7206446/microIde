@@ -4901,13 +4901,14 @@ class TranscriptRenderer extends Disposable {
 		stateDot.title = toolStateLabel(message);
 
 		const title = dom.append(summary, dom.$('.microide-tool-title'));
+		const statusPrefix = dom.append(title, dom.$('span.microide-tool-status-prefix'));
+		statusPrefix.textContent = formatToolStatusPrefix(message);
 		const primaryPath = toolPrimaryPath(message);
 		if (primaryPath) {
-			const verb = dom.append(title, dom.$('span.microide-tool-title-verb'));
-			verb.textContent = `${formatToolActionLabel(message)} `;
 			this.appendPathLink(title, primaryPath, store, { basename: false, className: 'microide-tool-title-path' });
 		} else {
-			title.textContent = formatToolTitle(message);
+			const subject = dom.append(title, dom.$('span.microide-tool-subject'));
+			subject.textContent = formatToolSubjectLabel(message);
 		}
 
 		const meta = dom.append(summary, dom.$('.microide-tool-meta'));
@@ -5366,6 +5367,42 @@ function formatToolTitle(message: IMicroIDEAgentMessage): string {
 	return toolName;
 }
 
+
+function formatToolStatusPrefix(message: IMicroIDEAgentMessage): string {
+	const mode = toolDisplayMode(message);
+	const failed = message.state === 'error' || Boolean(message.isError);
+	const running = message.state === 'streaming';
+	if (mode === 'command') {
+		return failed
+			? localize('microide.toolStatusCommandFailed', "运行失败")
+			: running ? localize('microide.toolStatusCommandRunning', "正在运行") : localize('microide.toolStatusCommandDone', "已运行");
+	}
+	if (mode === 'file') {
+		const edited = message.toolEffect === 'edit' || Boolean(message.diff);
+		if (failed) {
+			return edited ? localize('microide.toolStatusEditFailed', "修改失败") : localize('microide.toolStatusReadFailed', "读取失败");
+		}
+		if (running) {
+			return edited ? localize('microide.toolStatusEditing', "正在修改") : localize('microide.toolStatusReading', "正在读取");
+		}
+		return edited ? localize('microide.toolStatusEdited', "已修改") : localize('microide.toolStatusRead', "已读取");
+	}
+	if (failed) {
+		return localize('microide.toolStatusFailed', "调用失败");
+	}
+	return running ? localize('microide.toolStatusRunning', "正在调用") : localize('microide.toolStatusDone', "已调用");
+}
+
+function formatToolSubjectLabel(message: IMicroIDEAgentMessage): string {
+	const command = message.command ?? extractCommandText(message.input);
+	if (command) {
+		return truncateSingleLine(command, 96);
+	}
+	if (message.summary && message.summary !== message.toolName) {
+		return truncateSingleLine(message.summary, 96);
+	}
+	return formatToolTitle(message);
+}
 
 function formatToolInlineMeta(message: IMicroIDEAgentMessage): string {
 	const askUserInput = parseAskUserQuestionInput(message.input);

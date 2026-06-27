@@ -489,8 +489,14 @@ export class MicroClaudeCliEngine {
 
   #getOrStart(session, emit) {
     const existing = this.#handles.get(session.id);
-    if (existing && !existing.closed) {
+    if (existing && !existing.closed && !existing.child.killed && !existing.child.stdin.destroyed) {
       return existing;
+    }
+
+    if (existing) {
+      existing.clearCancelTimer?.();
+      existing.kill();
+      this.#handles.delete(session.id);
     }
 
     const handle = this.#spawn(session, emit);
@@ -528,6 +534,11 @@ export class MicroClaudeCliEngine {
       ...permissionArgs(session.permissionMode),
       ...filterExtraArgs(this.extraArgs, profile),
     ];
+
+    // Once this task id has been used to launch a CLI process, future launches
+    // must resume the persisted transcript instead of trying to create the same
+    // session id again. This keeps follow-up messages working after cancellation.
+    session.resume = true;
 
     const child = spawn(this.runtimePath, args, {
       cwd: session.workspace || process.cwd(),
