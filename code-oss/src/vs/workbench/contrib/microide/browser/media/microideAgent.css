@@ -1322,6 +1322,198 @@ body.microide-workbuddy-workbench .microide-agent-root.microide-task-detail .mic
 	background: var(--vscode-list-hoverBackground);
 }
 
+.microide-workbuddy-marketplace-install-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	min-height: 28px;
+	color: var(--vscode-descriptionForeground);
+	font-size: 13px;
+	white-space: nowrap;
+}
+
+.microide-workbuddy-install-spinner {
+	box-sizing: border-box;
+	width: 20px;
+	height: 20px;
+	border: 3px solid color-mix(in srgb, var(--vscode-descriptionForeground) 35%, transparent);
+	border-top-color: var(--vscode-descriptionForeground);
+	border-radius: 50%;
+	animation: microide-workbuddy-spin 0.78s linear infinite;
+}
+
+.microide-workbuddy-plugin-dialog-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	background: color-mix(in srgb, var(--vscode-editor-background) 66%, transparent);
+	backdrop-filter: blur(1px);
+}
+
+.microide-workbuddy-plugin-dialog {
+	position: relative;
+	box-sizing: border-box;
+	width: min(780px, 100%);
+	min-height: 210px;
+	padding: 48px 30px 28px;
+	border: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 70%, transparent);
+	border-radius: 26px;
+	background: color-mix(in srgb, var(--vscode-editorWidget-background) 98%, var(--vscode-editor-background));
+	box-shadow: 0 22px 58px color-mix(in srgb, var(--vscode-widget-shadow) 36%, transparent);
+}
+
+.microide-workbuddy-plugin-dialog-close {
+	position: absolute;
+	top: 24px;
+	right: 24px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border: 0;
+	border-radius: 50%;
+	color: var(--vscode-descriptionForeground);
+	background: transparent;
+	cursor: pointer;
+}
+
+.microide-workbuddy-plugin-dialog-close:hover,
+.microide-workbuddy-plugin-dialog-close:focus-visible {
+	outline: none;
+	background: var(--vscode-toolbar-hoverBackground);
+}
+
+.microide-workbuddy-plugin-dialog-title {
+	padding-right: 36px;
+	font-size: 26px;
+	font-weight: 750;
+	line-height: 1.35;
+	color: var(--vscode-foreground);
+}
+
+.microide-workbuddy-plugin-dialog-description {
+	margin-top: 22px;
+	max-width: 620px;
+	color: var(--vscode-descriptionForeground);
+	font-size: 16px;
+	line-height: 1.45;
+}
+
+.microide-workbuddy-plugin-dialog-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 18px;
+	margin-top: 22px;
+}
+
+.microide-workbuddy-plugin-dialog-button {
+	min-width: 92px;
+	min-height: 46px;
+	padding: 0 22px;
+	border: 1px solid color-mix(in srgb, var(--vscode-sideBarSectionHeader-border) 78%, transparent);
+	border-radius: 13px;
+	color: var(--vscode-foreground);
+	background: var(--vscode-input-background);
+	font-size: 17px;
+	cursor: pointer;
+}
+
+.microide-workbuddy-plugin-dialog-button:hover,
+.microide-workbuddy-plugin-dialog-button:focus-visible {
+	outline: none;
+	background: var(--vscode-list-hoverBackground);
+}
+
+.microide-workbuddy-plugin-dialog-button.danger {
+	border-color: transparent;
+	color: #ef3340;
+	background: color-mix(in srgb, #ef3340 12%, var(--vscode-input-background));
+}
+
+.microide-workbuddy-plugin-dialog-button.danger:hover,
+.microide-workbuddy-plugin-dialog-button.danger:focus-visible {
+	background: color-mix(in srgb, #ef3340 18%, var(--vscode-input-background));
+}
+
+.microide-workbuddy-plugin-toast {
+	position: fixed;
+	top: 42px;
+	left: 50%;
+	z-index: 120;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	max-width: min(520px, calc(100vw - 56px));
+	min-height: 42px;
+	padding: 0 14px;
+	border: 1px solid color-mix(in srgb, var(--vscode-focusBorder) 42%, transparent);
+	border-radius: 16px;
+	color: var(--vscode-foreground);
+	background: color-mix(in srgb, var(--vscode-inputOption-activeBackground, #dff0ff) 82%, var(--vscode-editorWidget-background));
+	box-shadow: 0 14px 34px color-mix(in srgb, var(--vscode-widget-shadow) 20%, transparent);
+	transform: translateX(-50%);
+	animation: microide-workbuddy-toast-in 140ms ease-out;
+}
+
+.microide-workbuddy-plugin-toast.error {
+	border-color: color-mix(in srgb, var(--vscode-errorForeground) 38%, transparent);
+	background: color-mix(in srgb, var(--vscode-errorForeground) 10%, var(--vscode-editorWidget-background));
+}
+
+.microide-workbuddy-plugin-toast > .microide-icon {
+	font-size: 17px;
+}
+
+.microide-workbuddy-plugin-toast.success > .microide-icon {
+	color: var(--vscode-testing-iconPassed, #2ea043);
+}
+
+.microide-workbuddy-plugin-toast.error > .microide-icon {
+	color: var(--vscode-errorForeground);
+}
+
+.microide-workbuddy-plugin-toast span {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 15px;
+}
+
+.microide-workbuddy-plugin-toast-close {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border: 0;
+	border-radius: 50%;
+	color: var(--vscode-descriptionForeground);
+	background: transparent;
+	cursor: pointer;
+}
+
+.microide-workbuddy-plugin-toast-close:hover,
+.microide-workbuddy-plugin-toast-close:focus-visible {
+	outline: none;
+	background: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 72%, transparent);
+}
+
+@keyframes microide-workbuddy-spin {
+	to { transform: rotate(360deg); }
+}
+
+@keyframes microide-workbuddy-toast-in {
+	from { opacity: 0; transform: translate(-50%, -8px); }
+	to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+
 body.microide-workbuddy-workbench .microide-agent-root.microide-task-detail .microide-timeline {
 	width: min(860px, 100%);
 	margin: 0 auto;

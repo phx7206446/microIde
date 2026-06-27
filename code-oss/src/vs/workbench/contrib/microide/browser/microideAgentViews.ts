@@ -111,6 +111,12 @@ interface IMicroIDETaskCategory {
 	readonly prompt: string;
 }
 
+interface IMicroIDEPluginToast {
+	readonly id: number;
+	readonly message: string;
+	readonly tone: 'success' | 'error';
+}
+
 const WORKBUDDY_NAV_ITEMS: readonly IMicroIDEWorkbenchNavItem[] = [
 	{ id: 'task', label: localize('microide.workbuddy.newTask', "新任务"), description: localize('microide.workbuddy.newTaskDescription', "启动一次智能体任务"), icon: Codicon.add },
 	{ id: 'plugins', label: localize('microide.workbuddy.skillsNav', "技能"), description: localize('microide.workbuddy.pluginsDescription', "技能商店和预设"), icon: Codicon.extensions },
@@ -247,6 +253,10 @@ export class MicroIDEAgentPanelView extends ViewPane {
 	private taskBrowserSharingRequested = false;
 	private installingPluginIds = new Set<string>();
 	private uninstallingPluginIds = new Set<string>();
+	private pendingPluginUninstall: IMicroClaudePluginInfo | undefined;
+	private pluginToast: IMicroIDEPluginToast | undefined;
+	private pluginToastHandle: ReturnType<typeof setTimeout> | undefined;
+	private pluginToastId = 0;
 	private editingSessionId: string | undefined;
 	private editingSessionSurface: 'tabs' | 'history' = 'tabs';
 	private editingSessionValue = '';
@@ -302,6 +312,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 	override dispose(): void {
 		this.hideTaskBrowserView();
 		this.taskBrowserModelDisposables.clear();
+		this.clearPluginToastTimer();
 		super.dispose();
 	}
 
@@ -1363,6 +1374,8 @@ export class MicroIDEAgentPanelView extends ViewPane {
 				row.classList.toggle('hidden', Boolean(query) && !haystack.includes(query));
 			}
 		});
+
+		this.renderPluginFeedbackLayer(shell);
 	}
 	private renderMarketplaceSection(container: HTMLElement, titleText: string, plugins: readonly IMicroClaudePluginInfo[], emptyText: string, rows: HTMLElement[]): void {
 		const section = dom.append(container, dom.$('.microide-workbuddy-marketplace-section'));
@@ -1414,54 +1427,154 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const description = dom.append(copy, dom.$('.microide-workbuddy-marketplace-item-description'));
 		description.textContent = plugin.description;
 		const meta = dom.append(copy, dom.$('.microide-workbuddy-marketplace-item-meta'));
-		meta.textContent = plugin.marketplace || plugin.source || (plugin.status === 'installed' ? localize('microide.workbuddy.installed', "已安装") : localize('microide.workbuddy.available', "可安装"));
+		meta.textContent = plugin.marketplace || plugin.source || (plugin.status === 'installed' ? localize('microide.workbuddy.installed', "\u5df2\u5b89\u88c5") : localize('microide.workbuddy.available', "\u53ef\u5b89\u88c5"));
 		const actions = dom.append(row, dom.$('.microide-workbuddy-marketplace-actions'));
 		const installed = plugin.status === 'installed';
 		const installing = this.installingPluginIds.has(plugin.id);
 		const uninstalling = this.uninstallingPluginIds.has(plugin.id);
-		const action = dom.append(actions, dom.$('button.microide-workbuddy-marketplace-action')) as HTMLButtonElement;
-		action.type = 'button';
-		action.textContent = installing
-			? localize('microide.workbuddy.installing', "安装中...")
-			: installed ? localize('microide.workbuddy.tryInChat', "在对话中使用") : localize('microide.workbuddy.install', "安装");
-		action.disabled = installing || uninstalling;
-		action.title = installed
-			? localize('microide.workbuddy.tryInstalledPlugin', "使用这个已安装技能开始对话")
-			: localize('microide.workbuddy.installPluginNow', "通过后端技能目录安装这个技能");
-		action.addEventListener('click', event => {
-			event.preventDefault();
-			event.stopPropagation();
-			if (installed) {
-				this.seedPrompt(plugin.actionCommand || ('Use ' + plugin.name + ' for this task.'), { newTask: true });
-				return;
-			}
-			void this.installCatalogPlugin(plugin);
-		});
+		if (installing) {
+			row.classList.add('installing');
+			const status = dom.append(actions, dom.$('.microide-workbuddy-marketplace-install-status'));
+			status.setAttribute('role', 'status');
+			status.setAttribute('aria-live', 'polite');
+			dom.append(status, dom.$('span.microide-workbuddy-install-spinner'));
+			const statusLabel = dom.append(status, dom.$('span'));
+			statusLabel.textContent = localize('microide.workbuddy.installing', "\u5b89\u88c5\u4e2d");
+		} else {
+			const action = dom.append(actions, dom.$('button.microide-workbuddy-marketplace-action')) as HTMLButtonElement;
+			action.type = 'button';
+			action.textContent = installed ? localize('microide.workbuddy.tryInChat', "\u5728\u5bf9\u8bdd\u4e2d\u4f7f\u7528") : localize('microide.workbuddy.install', "\u5b89\u88c5");
+			action.disabled = uninstalling;
+			action.title = installed
+				? localize('microide.workbuddy.tryInstalledPlugin', "\u4f7f\u7528\u8fd9\u4e2a\u5df2\u5b89\u88c5\u6280\u80fd\u5f00\u59cb\u5bf9\u8bdd")
+				: localize('microide.workbuddy.installPluginNow', "\u901a\u8fc7\u540e\u7aef\u6280\u80fd\u76ee\u5f55\u5b89\u88c5\u8fd9\u4e2a\u6280\u80fd");
+			action.addEventListener('click', event => {
+				event.preventDefault();
+				event.stopPropagation();
+				if (installed) {
+					this.seedPrompt(plugin.actionCommand || ('Use ' + plugin.name + ' for this task.'), { newTask: true });
+					return;
+				}
+				void this.installCatalogPlugin(plugin);
+			});
+		}
 		if (installed && !skill) {
 			const uninstall = dom.append(actions, dom.$('button.microide-workbuddy-marketplace-action.subtle')) as HTMLButtonElement;
 			uninstall.type = 'button';
 			uninstall.disabled = installing || uninstalling;
-			uninstall.textContent = uninstalling ? localize('microide.workbuddy.uninstalling', "移除中...") : localize('microide.workbuddy.uninstall', "卸载");
-			uninstall.title = localize('microide.workbuddy.uninstallPlugin', "卸载这个技能");
+			uninstall.textContent = uninstalling ? localize('microide.workbuddy.uninstalling', "\u6b63\u5728\u5378\u8f7d...") : localize('microide.workbuddy.uninstall', "\u5378\u8f7d");
+			uninstall.title = localize('microide.workbuddy.uninstallPlugin', "\u5378\u8f7d\u8fd9\u4e2a\u63d2\u4ef6");
 			uninstall.addEventListener('click', event => {
 				event.preventDefault();
 				event.stopPropagation();
-				void this.uninstallCatalogPlugin(plugin);
+				this.pendingPluginUninstall = plugin;
+				this.renderState();
 			});
 		}
 		return row;
 	}
+
+	private renderPluginFeedbackLayer(container: HTMLElement): void {
+		if (this.pendingPluginUninstall) {
+			this.renderPluginUninstallDialog(container, this.pendingPluginUninstall);
+		}
+		if (this.pluginToast) {
+			this.renderPluginToast(container, this.pluginToast);
+		}
+	}
+
+	private renderPluginUninstallDialog(container: HTMLElement, plugin: IMicroClaudePluginInfo): void {
+		const overlay = dom.append(container, dom.$('.microide-workbuddy-plugin-dialog-overlay'));
+		overlay.setAttribute('role', 'presentation');
+		const dialog = dom.append(overlay, dom.$('.microide-workbuddy-plugin-dialog'));
+		dialog.setAttribute('role', 'dialog');
+		dialog.setAttribute('aria-modal', 'true');
+		dialog.setAttribute('aria-labelledby', 'microide-plugin-uninstall-title');
+
+		const close = dom.append(dialog, dom.$('button.microide-workbuddy-plugin-dialog-close')) as HTMLButtonElement;
+		close.type = 'button';
+		close.title = localize('microide.workbuddy.close', "\u5173\u95ed");
+		appendIcon(close, Codicon.close);
+		close.addEventListener('click', () => this.cancelPluginUninstall());
+
+		const title = dom.append(dialog, dom.$('.microide-workbuddy-plugin-dialog-title'));
+		title.id = 'microide-plugin-uninstall-title';
+		title.textContent = localize('microide.workbuddy.uninstallDialogTitle', "\u5378\u8f7d {0} \u63d2\u4ef6\uff1f", plugin.name);
+		const description = dom.append(dialog, dom.$('.microide-workbuddy-plugin-dialog-description'));
+		description.textContent = localize('microide.workbuddy.uninstallDialogDescription', "\u8fd9\u5c06\u5378\u8f7d\u63d2\u4ef6\uff0c\u4f46\u4e0d\u4f1a\u5378\u8f7d\u4efb\u4f55\u6346\u7ed1\u7684\u5e94\u7528\u3002");
+		const actions = dom.append(dialog, dom.$('.microide-workbuddy-plugin-dialog-actions'));
+		const cancel = dom.append(actions, dom.$('button.microide-workbuddy-plugin-dialog-button')) as HTMLButtonElement;
+		cancel.type = 'button';
+		cancel.textContent = localize('microide.workbuddy.cancel', "\u53d6\u6d88");
+		cancel.addEventListener('click', () => this.cancelPluginUninstall());
+		const confirm = dom.append(actions, dom.$('button.microide-workbuddy-plugin-dialog-button.danger')) as HTMLButtonElement;
+		confirm.type = 'button';
+		confirm.textContent = this.uninstallingPluginIds.has(plugin.id) ? localize('microide.workbuddy.uninstalling', "\u6b63\u5728\u5378\u8f7d...") : localize('microide.workbuddy.uninstall', "\u5378\u8f7d");
+		confirm.disabled = this.uninstallingPluginIds.has(plugin.id);
+		confirm.addEventListener('click', event => {
+			event.preventDefault();
+			event.stopPropagation();
+			if (!confirm.disabled) {
+				void this.uninstallCatalogPlugin(plugin);
+			}
+		});
+	}
+
+	private renderPluginToast(container: HTMLElement, toast: IMicroIDEPluginToast): void {
+		const toastElement = dom.append(container, dom.$('.microide-workbuddy-plugin-toast.' + toast.tone));
+		toastElement.setAttribute('role', 'status');
+		toastElement.setAttribute('aria-live', 'polite');
+		appendIcon(toastElement, toast.tone === 'success' ? Codicon.check : Codicon.error);
+		const message = dom.append(toastElement, dom.$('span'));
+		message.textContent = toast.message;
+		const close = dom.append(toastElement, dom.$('button.microide-workbuddy-plugin-toast-close')) as HTMLButtonElement;
+		close.type = 'button';
+		close.title = localize('microide.workbuddy.dismiss', "\u5173\u95ed");
+		appendIcon(close, Codicon.close);
+		close.addEventListener('click', () => this.clearPluginToast());
+	}
+
+	private cancelPluginUninstall(): void {
+		this.pendingPluginUninstall = undefined;
+		this.renderState();
+	}
+
+	private showPluginToast(message: string, tone: 'success' | 'error' = 'success'): void {
+		this.clearPluginToastTimer();
+		this.pluginToast = { id: ++this.pluginToastId, message, tone };
+		this.renderState();
+		this.pluginToastHandle = setTimeout(() => {
+			this.pluginToast = undefined;
+			this.pluginToastHandle = undefined;
+			this.renderState();
+		}, 3600);
+	}
+
+	private clearPluginToast(): void {
+		this.clearPluginToastTimer();
+		this.pluginToast = undefined;
+		this.renderState();
+	}
+
+	private clearPluginToastTimer(): void {
+		if (this.pluginToastHandle) {
+			clearTimeout(this.pluginToastHandle);
+			this.pluginToastHandle = undefined;
+		}
+	}
+
 	private async installCatalogPlugin(plugin: IMicroClaudePluginInfo): Promise<void> {
 		if (this.installingPluginIds.has(plugin.id)) {
 			return;
 		}
+		this.clearPluginToast();
 		this.installingPluginIds.add(plugin.id);
 		this.renderState();
 		try {
 			await this.microIDEAgentService.installPlugin(plugin.id);
-			this.notificationService.info(localize('microide.workbuddy.pluginInstalled', "已安装 {0}。", plugin.name));
+			this.showPluginToast(localize('microide.workbuddy.pluginInstalledToast', "{0} \u63d2\u4ef6\u5df2\u5b89\u88c5", plugin.name));
 		} catch (error) {
-			this.notificationService.error(toErrorMessage(error));
+			this.showPluginToast(toErrorMessage(error), 'error');
 		} finally {
 			this.installingPluginIds.delete(plugin.id);
 			this.renderState();
@@ -1472,13 +1585,15 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		if (this.uninstallingPluginIds.has(plugin.id)) {
 			return;
 		}
+		this.clearPluginToast();
 		this.uninstallingPluginIds.add(plugin.id);
 		this.renderState();
 		try {
 			await this.microIDEAgentService.uninstallPlugin(plugin.id);
-			this.notificationService.info(localize('microide.workbuddy.pluginUninstalled', "已卸载 {0}。", plugin.name));
+			this.pendingPluginUninstall = undefined;
+			this.showPluginToast(localize('microide.workbuddy.pluginUninstalledToast', "{0} \u63d2\u4ef6\u5df2\u5378\u8f7d", plugin.name));
 		} catch (error) {
-			this.notificationService.error(toErrorMessage(error));
+			this.showPluginToast(toErrorMessage(error), 'error');
 		} finally {
 			this.uninstallingPluginIds.delete(plugin.id);
 			this.renderState();
