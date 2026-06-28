@@ -2719,7 +2719,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		host.removeAttribute('role');
 		host.removeAttribute('aria-modal');
 		host.removeAttribute('aria-label');
-		const card = dom.append(host, dom.$('.microide-permission-prompt-card.codex-style'));
+		const card = dom.append(host, dom.$('.microide-permission-prompt-card.codex-style.command-approval'));
 
 		const head = dom.append(card, dom.$('.microide-permission-prompt-head'));
 		const icon = dom.append(head, dom.$('.microide-permission-prompt-icon'));
@@ -2741,6 +2741,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		}
 
 		const options = dom.append(card, dom.$('.microide-permission-prompt-options'));
+		let instead: HTMLInputElement;
 		const addOption = (index: number, label: string, primary: boolean, run: () => void): void => {
 			const option = dom.append(options, dom.$('button.microide-permission-prompt-option' + (primary ? '.primary' : ''))) as HTMLButtonElement;
 			option.type = 'button';
@@ -2751,13 +2752,16 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			option.addEventListener('click', run);
 		};
 
-		addOption(1, localize('microide.permissionYes', "允许"), true, () => void this.resolvePromptApprove(request));
-		addOption(2, localize('microide.permissionYesAllEditsSession', "允许本会话同类操作"), false, () => void this.resolvePromptApproveProject(request));
-		addOption(3, localize('microide.permissionNo', "拒绝"), false, () => void this.resolvePromptDeny(request));
+		const permissionCommandHint = truncateSingleLine(request.command ?? request.path ?? request.summary, 46);
+		addOption(1, localize('microide.permissionYes', "是"), true, () => void this.resolvePromptApprove(request));
+		addOption(2, permissionCommandHint
+			? localize('microide.permissionYesSimilarSession', "是，且对于本会话中以后续内容开头的命令不再询问 {0}", permissionCommandHint)
+			: localize('microide.permissionYesAllEditsSession', "是，且本会话内类似命令不再询问"), false, () => void this.resolvePromptApproveProject(request));
+		addOption(3, localize('microide.permissionNoExplain', "否，请告知 MicroWorker 如何调整"), false, () => instead.focus());
 
-		const instead = dom.append(card, dom.$('input.microide-permission-prompt-instead')) as HTMLInputElement;
+		instead = dom.append(card, dom.$('input.microide-permission-prompt-instead')) as HTMLInputElement;
 		instead.type = 'text';
-		instead.placeholder = localize('microide.permissionInsteadClaude', "告诉 MicroWorker 改怎么做");
+		instead.placeholder = localize('microide.permissionInsteadClaude', "告诉 MicroWorker 应该怎么做");
 		instead.addEventListener('keydown', e => {
 			if (e.key === 'Enter' && instead.value.trim()) {
 				e.preventDefault();
@@ -2768,8 +2772,15 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			}
 		});
 
-		const cancel = dom.append(card, dom.$('.microide-permission-prompt-cancel'));
-		cancel.textContent = localize('microide.permissionEscCancel', "Esc 取消");
+		const footer = dom.append(card, dom.$('.microide-permission-prompt-footer'));
+		const cancel = dom.append(footer, dom.$('button.microide-permission-prompt-cancel')) as HTMLButtonElement;
+		cancel.type = 'button';
+		cancel.textContent = localize('microide.permissionSkip', "跳过");
+		cancel.addEventListener('click', () => void this.resolvePromptDeny(request));
+		const submitInstead = dom.append(footer, dom.$('button.microide-permission-prompt-submit')) as HTMLButtonElement;
+		submitInstead.type = 'button';
+		submitInstead.textContent = localize('microide.permissionSubmit', "提交");
+		submitInstead.addEventListener('click', () => void this.resolvePromptDeny(request, instead.value.trim() || undefined));
 
 		// Number-key shortcuts (1/2/3) when focus is not in the "instead" input.
 		host.onkeydown = e => {
@@ -2781,7 +2792,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			} else if (e.key === '2') {
 				void this.resolvePromptApproveProject(request);
 			} else if (e.key === '3') {
-				void this.resolvePromptDeny(request);
+				instead.focus();
 			}
 		};
 	}
@@ -4901,13 +4912,17 @@ class TranscriptRenderer extends Disposable {
 		stateDot.title = toolStateLabel(message);
 
 		const title = dom.append(summary, dom.$('.microide-tool-title'));
-		const statusPrefix = dom.append(title, dom.$('span.microide-tool-status-prefix'));
+		const heading = dom.append(title, dom.$('.microide-tool-heading'));
+		const statusPrefix = dom.append(heading, dom.$('span.microide-tool-status-prefix'));
 		statusPrefix.textContent = formatToolStatusPrefix(message);
+		const toolName = dom.append(heading, dom.$('span.microide-tool-name'));
+		toolName.textContent = formatToolNameLabel(message);
+		const subjectRow = dom.append(title, dom.$('.microide-tool-subject-row'));
 		const primaryPath = toolPrimaryPath(message);
 		if (primaryPath) {
-			this.appendPathLink(title, primaryPath, store, { basename: false, className: 'microide-tool-title-path' });
+			this.appendPathLink(subjectRow, primaryPath, store, { basename: false, className: 'microide-tool-title-path' });
 		} else {
-			const subject = dom.append(title, dom.$('span.microide-tool-subject'));
+			const subject = dom.append(subjectRow, dom.$('span.microide-tool-subject'));
 			subject.textContent = formatToolSubjectLabel(message);
 		}
 
@@ -5391,6 +5406,24 @@ function formatToolStatusPrefix(message: IMicroIDEAgentMessage): string {
 		return localize('microide.toolStatusFailed', "调用失败");
 	}
 	return running ? localize('microide.toolStatusRunning', "正在调用") : localize('microide.toolStatusDone', "已调用");
+}
+
+function formatToolNameLabel(message: IMicroIDEAgentMessage): string {
+	const raw = (message.toolName ?? '').trim();
+	if (toolDisplayMode(message) === 'command') {
+		const command = message.command ?? extractCommandText(message.input) ?? '';
+		if (/powershell|pwsh/i.test(raw) || /powershell|pwsh/i.test(command)) {
+			return 'powershell';
+		}
+		if (/cmd/i.test(raw)) {
+			return 'cmd';
+		}
+		if (/bash|shell/i.test(raw)) {
+			return 'bash';
+		}
+		return raw ? raw.toLowerCase() : 'bash';
+	}
+	return raw || formatToolActionLabel(message);
 }
 
 function formatToolSubjectLabel(message: IMicroIDEAgentMessage): string {
