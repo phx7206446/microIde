@@ -24,6 +24,7 @@ export class MicroClaudeCliEngine {
     this.cliPath = options.cliPath;
     this.runtimePath = options.runtimePath || process.execPath;
     this.extraArgs = options.extraArgs || [];
+    this.pluginDirs = options.pluginDirs || [];
     this.env = options.env || process.env;
     this.envForModel = options.envForModel || (() => ({}));
   }
@@ -157,6 +158,7 @@ export class MicroClaudeCliEngine {
       this.cliPath,
       '--print',
       ...profile.args,
+      ...pluginDirArgs(this.pluginDirs),
       '--input-format',
       'stream-json',
       '--output-format',
@@ -267,6 +269,7 @@ export class MicroClaudeCliEngine {
       this.cliPath,
       '--print',
       ...profile.args,
+      ...pluginDirArgs(this.pluginDirs),
       '--input-format',
       'stream-json',
       '--output-format',
@@ -521,6 +524,7 @@ export class MicroClaudeCliEngine {
       this.cliPath,
       '--print',
       ...profile.args,
+      ...pluginDirArgs(this.pluginDirs),
       '--input-format',
       'stream-json',
       '--output-format',
@@ -798,6 +802,34 @@ export function filterExtraArgs(extraArgs, profile) {
   return filtered;
 }
 
+function resolvePluginDirs(pluginDirs) {
+  if (typeof pluginDirs === 'function') {
+    try {
+      return pluginDirs() || [];
+    } catch {
+      return [];
+    }
+  }
+  return pluginDirs || [];
+}
+
+function pluginDirArgs(pluginDirs) {
+  const args = [];
+  const seen = new Set();
+  for (const pluginDir of resolvePluginDirs(pluginDirs)) {
+    if (typeof pluginDir !== 'string' || !pluginDir.trim()) {
+      continue;
+    }
+    const trimmed = pluginDir.trim();
+    const key = trimmed.toLowerCase();
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    args.push('--plugin-dir', trimmed);
+  }
+  return args;
+}
 export function createEngineEnv(...sources) {
   const env = {};
   for (const source of sources) {

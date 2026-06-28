@@ -12,6 +12,9 @@ export const CAPABILITIES = Object.freeze({
   cancellation: true,
   permissionResolution: true,
   agentTeams: true,
+  skills: true,
+  plugins: true,
+  browserView: true,
 });
 
 export const ErrorCode = Object.freeze({

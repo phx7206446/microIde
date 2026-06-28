@@ -3,7 +3,7 @@
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { NdjsonTransport } from './transport.js';
 import { envForModel, getPublicConfiguration, loadMicroClaudeConfig } from './config.js';
@@ -280,6 +280,44 @@ function readSkillManifest(file, fallbackName) {
   return { name, description };
 }
 
+function discoverMicroClaudePluginDirs() {
+  const dirs = [];
+  for (const plugin of discoverInstalledPlugins()) {
+    if (!plugin.path || !existsSync(plugin.path)) {
+      continue;
+    }
+    ensureClaudePluginManifest(plugin);
+    dirs.push(plugin.path);
+  }
+  return dirs;
+}
+
+function ensureClaudePluginManifest(plugin) {
+  const codexManifestPath = join(plugin.path, '.codex-plugin', 'plugin.json');
+  const claudeManifestDir = join(plugin.path, '.claude-plugin');
+  const claudeManifestPath = join(claudeManifestDir, 'plugin.json');
+  if (existsSync(claudeManifestPath) || !existsSync(codexManifestPath)) {
+    return;
+  }
+  try {
+    const parsed = safeReadJson(codexManifestPath) || {};
+    const manifest = {
+      name: parsed.name || plugin.name || plugin.id,
+      displayName: parsed.displayName || parsed.name || plugin.name || plugin.id,
+      version: parsed.version || plugin.version || '1.0.0',
+      description: parsed.description || plugin.description || 'Installed plugin',
+      ...(parsed.skills ? { skills: parsed.skills } : {}),
+      ...(parsed.commands ? { commands: parsed.commands } : {}),
+      ...(parsed.agents ? { agents: parsed.agents } : {}),
+      ...(parsed.hooks ? { hooks: parsed.hooks } : {}),
+      ...(parsed.mcpServers ? { mcpServers: parsed.mcpServers } : {}),
+    };
+    mkdirSync(claudeManifestDir, { recursive: true });
+    writeFileSync(claudeManifestPath, JSON.stringify(manifest, null, 2), 'utf8');
+  } catch {
+    // The UI can still list the plugin; the CLI will simply skip this plugin dir.
+  }
+}
 function discoverInstalledPlugins() {
   const plugins = [...readClaudeInstalledPlugins(), ...readCodexPluginCache()];
   const seen = new Set();
@@ -1172,6 +1210,7 @@ function createEngine(args, config) {
         env,
         envForModel: model => envForModel(config, model || config.selectedModel),
         extraArgs: parseCsvArg(args.microclaudeArg),
+        pluginDirs: discoverMicroClaudePluginDirs,
       }),
       { name: 'microclaude' },
     );

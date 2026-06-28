@@ -94,6 +94,9 @@ export interface IMicroClaudeCapabilities {
 	readonly cancellation: boolean;
 	readonly permissionResolution: boolean;
 	readonly agentTeams?: boolean;
+	readonly skills?: boolean;
+	readonly plugins?: boolean;
+	readonly browserView?: boolean;
 }
 
 export interface IMicroClaudeManifest {

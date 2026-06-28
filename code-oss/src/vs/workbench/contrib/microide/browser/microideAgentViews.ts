@@ -2124,7 +2124,7 @@ export class MicroIDEAgentPanelView extends ViewPane {
 			this.scheduleTaskBrowserLayout(0);
 		} catch (error) {
 			this.taskBrowserStatus = 'error';
-			this.notificationService.error(toErrorMessage(error));
+			this.renderScheduler.schedule();
 		} finally {
 			if (this.taskBrowserOpeningUrl === url) {
 				this.taskBrowserOpeningUrl = undefined;
@@ -2210,8 +2210,8 @@ export class MicroIDEAgentPanelView extends ViewPane {
 		const snap = (value: number): number => Math.floor(value * zoomFactor) / zoomFactor;
 		const width = Math.max(0, snap(rect.width));
 		const height = Math.max(0, snap(rect.height));
-		const targetViewportWidth = 980;
-		const browserScale = width > 0 ? Math.min(1, Math.max(0.42, width / targetViewportWidth)) : 1;
+		const targetViewportWidth = 1040;
+		const browserScale = width > 0 ? Math.min(1, Math.max(0.5, width / targetViewportWidth)) : 1;
 		const cornerRadius = parseFloat(mainWindow.getComputedStyle(host).borderTopLeftRadius ?? '0') || 0;
 		const windowId = (mainWindow as Window & { readonly vscodeWindowId: number }).vscodeWindowId;
 		void model.layout({
@@ -2228,7 +2228,10 @@ export class MicroIDEAgentPanelView extends ViewPane {
 				return model.setVisible(true);
 			}
 			return undefined;
-		}).catch(error => this.notificationService.error(toErrorMessage(error)));
+		}).catch(() => {
+			this.taskBrowserStatus = 'error';
+			this.renderScheduler.schedule();
+		});
 	}
 
 	private hideTaskBrowserView(): void {
@@ -5423,7 +5426,7 @@ function formatToolNameLabel(message: IMicroIDEAgentMessage): string {
 		}
 		return raw ? raw.toLowerCase() : 'bash';
 	}
-	return raw || formatToolActionLabel(message);
+	return raw || formatToolActionLabel(message) || 'tool';
 }
 
 function formatToolSubjectLabel(message: IMicroIDEAgentMessage): string {
@@ -5434,9 +5437,15 @@ function formatToolSubjectLabel(message: IMicroIDEAgentMessage): string {
 	if (message.summary && message.summary !== message.toolName) {
 		return truncateSingleLine(message.summary, 96);
 	}
-	return formatToolTitle(message);
+	const inputSummary = extractDisplayText(message.input, ['path', 'file_path', 'url', 'query', 'pattern', 'content', 'text', 'description']);
+	if (inputSummary) {
+		return truncateSingleLine(inputSummary, 96);
+	}
+	if (message.input !== undefined && message.input !== null && message.input !== '') {
+		return truncateSingleLine(formatToolValue(message.input), 96);
+	}
+	return formatToolTitle(message) || formatToolNameLabel(message);
 }
-
 function formatToolInlineMeta(message: IMicroIDEAgentMessage): string {
 	const askUserInput = parseAskUserQuestionInput(message.input);
 	if (isAskUserQuestionToolName(message.toolName) && askUserInput) {
